@@ -1,11 +1,93 @@
 <script>
+    import { onMount } from 'svelte';
 
+    // Heights and widths as percentages
+    let leftWidth = 50; // Width of the left container
+    let rightWidth = 50; // Width of the right container
+    let topHeight = 50; // Height of the top container
+    let bottomHeight = 50; // Height of the bottom row
+
+    let isDraggingHeight = false; // For resizing heights (up and down)
+    let isDraggingWidth = false; // For resizing widths (left and right)
+
+    // Reiszing Heights (Horizontal Resizer)
+    const startDragHeight = () => (isDraggingHeight = true);
+    const stopDragHeight = () => (isDraggingHeight = false);
+
+    const onDragHeight = (event) =>
+    {
+        if (!isDraggingHeight) return;
+
+        const totalHeight = window.innerHeight; // Total height of the viewport
+        const mouseY = event.clientY;
+
+        const newTopHeight = (mouseY / totalHeight) * 100;
+        const newBottomHeight = 100 - newTopHeight;
+
+        if (newTopHeight >= 10 && newBottomHeight >= 10)
+        {
+            topHeight = newTopHeight;
+            bottomHeight = newBottomHeight;
+        }
+    };
+
+    // Resizing Widths  (Vertical Resizer)
+    const startDragWidth = () => (isDraggingWidth = true);
+    const stopDragWidth = () => (isDraggingWidth = false);
+
+    const onDragWidth = (event) =>
+    {
+        if (!isDraggingWidth) return;
+
+        const totalWidth = document.body.offsetWidth; // Total width of the viewport
+        const mouseX = event.clientX;
+
+        const newLeftWidth = (mouseX / totalWidth) * 100;
+        const newRightWidth = 100 - newLeftWidth;
+
+        if (newLeftWidth >= 10 && newRightWidth >= 10)
+            {
+                leftWidth = newLeftWidth;
+                rightWidth = newRightWidth;
+            }
+    };
+
+    onMount(() =>
+    {
+        window.addEventListener('mousemove', onDragHeight);
+        window.addEventListener('mouseup', stopDragHeight);
+        window.addEventListener('mousemove', onDragWidth);
+        window.addEventListener('mouseup', stopDragWidth);
+    });
 </script>
+  
 <div class="container">
-<div class="large-container"> Main Packets Container</div>
-    <div class="bottom-row">
-        <!-- Bottom Left, Layers Container -->
-        <div class="small-container">
+    <!-- Options Section -->
+    <div class="options-bar">
+        Options Section
+    </div>
+    <!-- Top Container -->
+    <div class="large-container" style="height: {topHeight}%; background-color: #4caf50;">
+    Main Packets Container ({Math.round(topHeight)}%)
+    </div>
+
+    <!-- Horizontal Resizer (Height Adjuster) -->
+    <div
+        class="horizontal-resizer"
+        role="separator"
+        aria-valuemin="10"
+        aria-valuemax="90"
+        aria-valuenow="{topHeight}"
+        aria-orientation="horizontal"
+        tabindex="0"
+        on:mousedown={startDragHeight}>
+    </div>
+
+    <!-- Bottom Row -->
+    <div class="bottom-row" style="height: {bottomHeight}%; background-color: #f1f1f1;">
+
+        <!-- Bottom Left Container with Nested Containers -->
+        <div class="small-container" style="width: {leftWidth}%; background-color: #2196f3;">
             <div class="nested-container level-1">
                 Level 1
                 <div class="nested-container level-2">
@@ -22,92 +104,148 @@
                 </div>
             </div>
         </div>
-        <!-- Bottom Right Container, Hex I guess lol -->
-        <div class="small-container"> Hex Container</div>
+
+        <!-- Vertical Resizer (Width Adjuster) -->
+        <div
+            class="vertical-resizer"
+            role="separator"
+            aria-valuemin="10"
+            aria-valuemax="90"
+            aria-valuenow="{leftWidth}"
+            aria-orientation="vertical"
+            tabindex="0"
+            on:mousedown={startDragWidth}
+            style="left: {leftWidth}%;">
+        </div>
+
+        <!-- Bottom Right Container -->
+        <div class="small-container" style="width: {rightWidth}%; background-color: #ff9800;">
+            Hex Container ({Math.round(rightWidth)}%)
+        </div>
     </div>
 </div>
-      
-  <style>
+  
+<style>
     .container
     {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto;
-      width: 100%;
-      max-width: 1200px;
-      padding: 1rem;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        justify-content: flex-start;
+        width: 100%;
+        height: 100vh;
+        margin: 0 auto;
+        outline: 10px solid black; 
     }
-  
+
+    .options-bar
+    {
+        width: 100%;
+        height: 4%;
+        background-color: #333;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+        border-bottom: 10px solid black; /* Add a bottom outline */
+    }
+
     .large-container
     {
-      width: 100%;
-      height: 200px;
-      background-color: #4caf50;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-size: 1.5rem;
-      margin-bottom: 1rem;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        outline: #000;
+        font-size: 1.5rem;
     }
-  
+
     .bottom-row
     {
-      display: flex;
-      width: 100%;
-      gap: 1rem;
+        display: flex;
+        width: 100%;
+        position: relative;
     }
-  
+
     .small-container
     {
-      flex: 1;
-      height: 100px;
-      background-color: #2196f3;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-size: 1.2rem;
-      position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.2rem;
+        overflow: hidden;
     }
-  
+
     .nested-container
     {
-      width: 80%;
-      height: 80%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-size: 0.8rem;
-      border: 2px solid white;
+        width: 80%;
+        height: 80%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 0.8rem;
+        border: 2px solid white;
     }
-  
+
     .level-1
     {
-      background-color: #f44336;
+        background-color: #f44336;
     }
-  
+
     .level-2
     {
-      background-color: #e91e63;
+        background-color: #e91e63;
     }
-  
+
     .level-3
     {
-      background-color: #9c27b0;
+        background-color: #9c27b0;
     }
-  
+
     .level-4
     {
-      background-color: #673ab7;
+        background-color: #673ab7;
     }
-  
+
     .level-5
     {
-      background-color: #3f51b5;
+        background-color: #3f51b5;
     }
-  </style>
-  
+
+    /* Horizontal Resizer (Height Adjuster) */
+    .horizontal-resizer
+    {
+        height: 10px;
+        background-color: #000;
+        cursor: ns-resize;
+        width: 100%;
+        z-index: 1;
+        position: relative;
+    }
+
+    .horizontal-resizer:hover
+    {
+        background-color: #555;
+    }
+
+    /* Vertical Resizer (Width Adjuster) */
+    .vertical-resizer
+    {
+        width: 10px;
+        background-color: #000;
+        cursor: ew-resize;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        z-index: 1;
+    }
+
+    .vertical-resizer:hover
+    {
+        background-color: #555;
+    }
+</style>
