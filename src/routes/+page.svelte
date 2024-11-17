@@ -1,5 +1,7 @@
 <script>
     import { onMount } from 'svelte';
+    import jQuery from 'jquery';
+    import {packets} from '../data.js';
 
     // Heights and widths as percentages
     let leftWidth = 50; // Width of the left container
@@ -59,16 +61,140 @@
         window.addEventListener('mousemove', onDragWidth);
         window.addEventListener('mouseup', stopDragWidth);
     });
+
+    let running = false; // are packets being sniffed?
+    let bColor = "#4caf50"; // background color for the sniffed packets section
+    let sniffButtonLabel = "Sniff Packets";
+    let cancel = false; // should we cancel the packet sniffing?
+    let filter = "" // filter the user can set to display certain packets
+    let allPackets = []; // contains all packets sniffed
+    let packetsDisplayed = 0;
+
+    $: if (running == true){
+        bColor = "#e17878";
+        sniffButtonLabel = "Stop Sniffing Packets";
+    }
+
+    $: if (running == false){
+        bColor = "#4caf50";
+        sniffButtonLabel = "Sniff Packets";
+    }
+
+    function sniffPacket(i){
+        const individualFilters = filter.split(" && ");
+        let matchesFilters = true;
+        allPackets.push([((i+1)+""), packets.application[i].timeCaptured, packets.application[i].transport[0].network[0].source, packets.application[i].transport[0].network[0].destination, packets.application[i].protocol, packets.application[i].transport[0].network[0].dataLink[0].physical[0].frameLength, packets.application[i].method]);
+        if (filter !== ""){
+            for (let j = 0; j < individualFilters.length; j++){
+                if (individualFilters[j] === ((i+1)+"") || individualFilters[j] === packets.application[i].timeCaptured || individualFilters[j] === packets.application[i].transport[0].network[0].source || individualFilters[j] === packets.application[i].transport[0].network[0].destination || individualFilters[j] === packets.application[i].protocol || individualFilters[j] === packets.application[i].transport[0].network[0].dataLink[0].physical[0].frameLength || individualFilters[j] === packets.application[i].method){
+
+                }
+                else{
+                    matchesFilters = false;
+                    break;
+                }   
+            }
+        }
+        if (matchesFilters == true){
+            jQuery("#sniffedPackets").prepend("<tr><td>" + (i+1) + "</td><td>" + packets.application[i].timeCaptured + "</td><td>" + packets.application[i].transport[0].network[0].source + "</td><td>" + packets.application[i].transport[0].network[0].destination + "</td><td>" + packets.application[i].protocol + "</td><td>" + packets.application[i].transport[0].network[0].dataLink[0].physical[0].frameLength + "</td><td>" + packets.application[i].method + "</td></tr>");
+            packetsDisplayed += 1;
+        }
+    }
+
+    function runWireshark(){
+        if (running == true){
+            cancel = true;
+            setTimeout(function() { running = false; cancel = false; }, 1000);
+            // might need to adjust depending on size of data file
+        }
+        else{
+            running = true;
+            let numPackets = Object.keys(packets.application).length;
+            for (let i = 0; i < numPackets; i++) {
+                setTimeout(function() { if (!cancel) {sniffPacket(i)} }, 500 * i);
+            }
+            setTimeout(function() { running = false; }, 500 * (numPackets-1));
+        }
+    }
+    
+    function setFilter(){
+        filter = document.getElementById("filter").value;
+        const individualFilters = filter.split(" && ");
+        jQuery("#sniffedPackets").empty();
+        packetsDisplayed = 0;
+        if (filter !== ""){
+            for (let m = 0; m < allPackets.length; m++){
+                let matchesFilters = true;
+                for (let j = 0; j < individualFilters.length; j++){
+                    if (individualFilters[j] === allPackets[m][0] || individualFilters[j] === allPackets[m][1] || individualFilters[j] === allPackets[m][2] || individualFilters[j] === allPackets[m][3] || individualFilters[j] === allPackets[m][4] || individualFilters[j] === allPackets[m][5] || individualFilters[j] === allPackets[m][6]){
+
+                    }
+                    else{
+                        matchesFilters = false;
+                        break;
+                    }   
+                }
+                if (matchesFilters == true){
+                    jQuery("#sniffedPackets").prepend("<tr><td>" + allPackets[m][0] + "</td><td>" + allPackets[m][1] + "</td><td>" + allPackets[m][2] + "</td><td>" + allPackets[m][3] + "</td><td>" + allPackets[m][4] + "</td><td>" + allPackets[m][5] + "</td><td>" + allPackets[m][6] + "</td></tr>");
+                    packetsDisplayed += 1;
+                }
+            }
+            if (packetsDisplayed == 0){
+                jQuery("#sniffedPackets").prepend("<tr><td></td><td></td><td></td><td>No packets match the filter!</td></tr>");
+            }
+        }
+        else{
+            for (let k = 0; k < allPackets.length; k++){
+                jQuery("#sniffedPackets").prepend("<tr><td>" + allPackets[k][0] + "</td><td>" + allPackets[k][1] + "</td><td>" + allPackets[k][2] + "</td><td>" + allPackets[k][3] + "</td><td>" + allPackets[k][4] + "</td><td>" + allPackets[k][5] + "</td><td>" + allPackets[k][6] + "</td></tr>");
+                packetsDisplayed += 1;
+            }
+        }
+    }
+
+    function removeFilter(){
+        filter = "";
+        jQuery("#sniffedPackets").empty();
+        packetsDisplayed = 0;
+        for (let k = 0; k < allPackets.length; k++){
+            jQuery("#sniffedPackets").prepend("<tr><td>" + allPackets[k][0] + "</td><td>" + allPackets[k][1] + "</td><td>" + allPackets[k][2] + "</td><td>" + allPackets[k][3] + "</td><td>" + allPackets[k][4] + "</td><td>" + allPackets[k][5] + "</td><td>" + allPackets[k][6] + "</td></tr>");
+            packetsDisplayed += 1;
+        }
+    }
+
+    function resetPackets(){
+        jQuery("#sniffedPackets").empty();
+        packetsDisplayed = 0;
+        allPackets = [];
+    }
 </script>
   
 <div class="container">
     <!-- Options Section -->
     <div class="options-bar">
-        Options Section
+        <button on:click={runWireshark}> {sniffButtonLabel}</button>
+        <input type="text" id="filter"/>
+        <button on:click={setFilter}> Set Filter</button>
+        <p>Filter: {filter}</p>
+        <button on:click={removeFilter}> Remove Filter</button>
+        <button on:click={resetPackets}> Reset Packets</button>
     </div>
     <!-- Top Container -->
-    <div class="large-container" style="height: {topHeight}%; background-color: #4caf50;">
-    Main Packets Container ({Math.round(topHeight)}%)
+    <div class="large-container" style="height: {topHeight}%; background-color: {bColor}; overflow-y:scroll;">
+        <table id="packets">
+            <thead>
+                <tr>
+                    <th>No.</th>
+                    <th>Time</th>
+                    <th>Source</th>
+                    <th>Destination</th>
+                    <th>Protocol</th>
+                    <th>Length</th>
+                    <th>Info</th>
+                </tr>
+            </thead>
+            <tbody id="sniffedPackets">
+            </tbody>
+        </table>
     </div>
 
     <!-- Horizontal Resizer (Height Adjuster) -->
@@ -154,12 +280,22 @@
     .large-container
     {
         width: 100%;
-        display: flex;
+        /*display: flex;*/
         align-items: center;
         justify-content: center;
         color: white;
         outline: #000;
         font-size: 1.5rem;
+    }
+
+    table
+    {
+        width: 100%;
+    }
+
+    th
+    {
+        border: 2px solid black;
     }
 
     .bottom-row
