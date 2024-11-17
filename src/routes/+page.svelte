@@ -66,7 +66,8 @@
     let bColor = "#4caf50"; // background color for the sniffed packets section
     let sniffButtonLabel = "Sniff Packets";
     let cancel = false; // should we cancel the packet sniffing?
-    let filter = ""
+    let filter = "" // filter the user can set to display certain packets
+    let allPackets = []; // contains all packets sniffed
 
     $: if (running == true){
         bColor = "#e17878";
@@ -81,6 +82,7 @@
     function sniffPacket(i){
         const individualFilters = filter.split(" && ");
         let matchesFilters = true;
+        allPackets.push([((i+1)+""), packets.application[i].timeCaptured, packets.application[i].transport[0].network[0].source, packets.application[i].transport[0].network[0].destination, packets.application[i].protocol, packets.application[i].transport[0].network[0].dataLink[0].physical[0].frameLength, packets.application[i].method]);
         if (filter !== ""){
             for (let j = 0; j < individualFilters.length; j++){
                 if (individualFilters[j] === ((i+1)+"") || individualFilters[j] === packets.application[i].timeCaptured || individualFilters[j] === packets.application[i].transport[0].network[0].source || individualFilters[j] === packets.application[i].transport[0].network[0].destination || individualFilters[j] === packets.application[i].protocol || individualFilters[j] === packets.application[i].transport[0].network[0].dataLink[0].physical[0].frameLength || individualFilters[j] === packets.application[i].method){
@@ -115,14 +117,43 @@
     
     function setFilter(){
         filter = document.getElementById("filter").value;
+        const individualFilters = filter.split(" && ");
+        jQuery("#sniffedPackets").empty();
+        if (filter !== ""){
+            for (let m = 0; m < allPackets.length; m++){
+                let matchesFilters = true;
+                for (let j = 0; j < individualFilters.length; j++){
+                    if (individualFilters[j] === allPackets[m][0] || individualFilters[j] === allPackets[m][1] || individualFilters[j] === allPackets[m][2] || individualFilters[j] === allPackets[m][3] || individualFilters[j] === allPackets[m][4] || individualFilters[j] === allPackets[m][5] || individualFilters[j] === allPackets[m][6]){
+
+                    }
+                    else{
+                        matchesFilters = false;
+                        break;
+                    }   
+                }
+                if (matchesFilters == true){
+                    jQuery("#sniffedPackets").prepend("<tr><td>" + allPackets[m][0] + "</td><td>" + allPackets[m][1] + "</td><td>" + allPackets[m][2] + "</td><td>" + allPackets[m][3] + "</td><td>" + allPackets[m][4] + "</td><td>" + allPackets[m][5] + "</td><td>" + allPackets[m][6] + "</td></tr>");
+                }
+            }
+        }
+        else{
+            for (let k = 0; k < allPackets.length; k++){
+                jQuery("#sniffedPackets").prepend("<tr><td>" + allPackets[k][0] + "</td><td>" + allPackets[k][1] + "</td><td>" + allPackets[k][2] + "</td><td>" + allPackets[k][3] + "</td><td>" + allPackets[k][4] + "</td><td>" + allPackets[k][5] + "</td><td>" + allPackets[k][6] + "</td></tr>");
+            }
+        }
     }
 
     function removeFilter(){
         filter = "";
+        jQuery("#sniffedPackets").empty();
+        for (let k = 0; k < allPackets.length; k++){
+            jQuery("#sniffedPackets").prepend("<tr><td>" + allPackets[k][0] + "</td><td>" + allPackets[k][1] + "</td><td>" + allPackets[k][2] + "</td><td>" + allPackets[k][3] + "</td><td>" + allPackets[k][4] + "</td><td>" + allPackets[k][5] + "</td><td>" + allPackets[k][6] + "</td></tr>");
+        }
     }
 
     function resetPackets(){
         jQuery("#sniffedPackets").empty();
+        allPackets = [];
     }
 </script>
   
