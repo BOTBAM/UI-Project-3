@@ -4,8 +4,8 @@
     import {packets} from '../data.js';
 
     // Heights and widths as percentages
-    let leftWidth = 50; // Width of the left container
-    let rightWidth = 50; // Width of the right container
+    let leftWidth = 70; // Width of the left container
+    let rightWidth = 30; // Width of the right container
     let topHeight = 50; // Height of the top container
     let bottomHeight = 50; // Height of the bottom row
 
@@ -33,6 +33,30 @@
         }
     };
 
+    const adjustHeight = (event) =>
+    {
+        if (event.key === "ArrowUp")
+        {
+            const newTopHeight = Math.min(90, topHeight - 1);
+            const newBottomHeight = 100 - newTopHeight;
+            if (newBottomHeight >= 10)
+            {
+                topHeight = newTopHeight;
+                bottomHeight = newBottomHeight;
+            }
+        }
+        else if (event.key === "ArrowDown")
+        {
+            const newTopHeight = Math.max(10, topHeight + 1);
+            const newBottomHeight = 100 - newTopHeight;
+            if (newBottomHeight >= 10)
+            {
+                topHeight = newTopHeight;
+                bottomHeight = newBottomHeight;
+            }
+        }
+    };
+
     // Resizing Widths  (Vertical Resizer)
     const startDragWidth = () => (isDraggingWidth = true);
     const stopDragWidth = () => (isDraggingWidth = false);
@@ -52,6 +76,24 @@
                 leftWidth = newLeftWidth;
                 rightWidth = newRightWidth;
             }
+    };
+    // Added keyboard controll of the adjustable separators for user-friendlyness and A11y
+    const adjustWidth = (event) => {
+        if (event.key === "ArrowLeft") {
+            const newLeftWidth = Math.max(10, leftWidth - 1);
+            const newRightWidth = 100 - newLeftWidth;
+            if (newRightWidth >= 10) {
+                leftWidth = newLeftWidth;
+                rightWidth = newRightWidth;
+            }
+        } else if (event.key === "ArrowRight") {
+            const newLeftWidth = Math.min(90, leftWidth + 1);
+            const newRightWidth = 100 - newLeftWidth;
+            if (newRightWidth >= 10) {
+                leftWidth = newLeftWidth;
+                rightWidth = newRightWidth;
+            }
+        }
     };
 
     onMount(() =>
@@ -178,6 +220,7 @@
         <button on:click={removeFilter}> Remove Filter</button>
         <button on:click={resetPackets}> Reset Packets</button>
     </div>
+
     <!-- Top Container -->
     <div class="large-container" style="height: {topHeight}%; background-color: {bColor}; overflow-y:scroll;">
         <table id="packets">
@@ -198,16 +241,13 @@
     </div>
 
     <!-- Horizontal Resizer (Height Adjuster) -->
-    <div
+    <button
         class="horizontal-resizer"
-        role="separator"
-        aria-valuemin="10"
-        aria-valuemax="90"
-        aria-valuenow="{topHeight}"
-        aria-orientation="horizontal"
+        aria-label="Resize panel height"
         tabindex="0"
-        on:mousedown={startDragHeight}>
-    </div>
+        on:mousedown={startDragHeight}
+        on:keydown={adjustHeight}
+    ></button>
 
     <!-- Bottom Row -->
     <div class="bottom-row" style="height: {bottomHeight}%; background-color: #f1f1f1;">
@@ -232,17 +272,16 @@
         </div>
 
         <!-- Vertical Resizer (Width Adjuster) -->
-        <div
+        <button
             class="vertical-resizer"
-            role="separator"
-            aria-valuemin="10"
-            aria-valuemax="90"
-            aria-valuenow="{leftWidth}"
-            aria-orientation="vertical"
+            aria-label="Resize panel width"
             tabindex="0"
             on:mousedown={startDragWidth}
-            style="left: {leftWidth}%;">
-        </div>
+            on:keydown={adjustWidth}
+            style="left: {leftWidth}%;"
+        >
+        </button>
+
 
         <!-- Bottom Right Container -->
         <div class="small-container" style="width: {rightWidth}%; background-color: #ff9800;">
@@ -250,7 +289,7 @@
         </div>
     </div>
 </div>
-  
+
 <style>
     .container
     {
@@ -269,12 +308,12 @@
         width: 100%;
         height: 4%;
         background-color: #333;
-        color: white;
+        color: rgb(255, 255, 255);
         display: flex;
         align-items: center;
         justify-content: center;
         font-size: 1rem;
-        border-bottom: 10px solid black; /* Add a bottom outline */
+        border-bottom: 10px solid rgb(0, 0, 0); /* Add a bottom outline */
     }
 
     .large-container
@@ -283,7 +322,7 @@
         /*display: flex;*/
         align-items: center;
         justify-content: center;
-        color: white;
+        color: rgb(0, 0, 0);
         outline: #000;
         font-size: 1.5rem;
     }
