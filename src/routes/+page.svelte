@@ -79,7 +79,7 @@
     }
 
     function sniffPacket(i){
-        jQuery("#packets").prepend("<tr><td>" + (i+1) + "</td><td>" + packets.application[i].timeCaptured + "</td><td>" + packets.application[i].transport[0].network[0].source + "</td><td>" + packets.application[i].transport[0].network[0].destination + "</td><td>" + packets.application[i].protocol + "</td><td>" + packets.application[i].transport[0].network[0].dataLink[0].physical[0].frameLength + "</td><td>" + packets.application[i].method + "</td></tr>");
+        jQuery("#sniffedPackets").prepend("<tr><td>" + (i+1) + "</td><td>" + packets.application[i].timeCaptured + "</td><td>" + packets.application[i].transport[0].network[0].source + "</td><td>" + packets.application[i].transport[0].network[0].destination + "</td><td>" + packets.application[i].protocol + "</td><td>" + packets.application[i].transport[0].network[0].dataLink[0].physical[0].frameLength + "</td><td>" + packets.application[i].method + "</td></tr>");
     }
 
     function runWireshark(){
@@ -101,6 +101,10 @@
     function setFilter(){
         filter = document.getElementById("filter").value;
     }
+
+    function resetPackets(){
+        jQuery("#sniffedPackets").empty();
+    }
 </script>
   
 <div class="container">
@@ -109,6 +113,7 @@
         <button on:click={runWireshark}> {sniffButtonLabel}</button>
         <input type="text" id="filter"/>
         <button on:click={setFilter}> Set Filter</button>
+        <button on:click={resetPackets}> Reset Packets</button>
     </div>
     <!-- Top Container -->
     <div class="large-container" style="height: {topHeight}%; background-color: {bColor}; overflow-y:scroll;">
@@ -124,7 +129,7 @@
                     <th>Info</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="sniffedPackets">
             </tbody>
         </table>
     </div>
