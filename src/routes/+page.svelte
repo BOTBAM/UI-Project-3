@@ -68,6 +68,7 @@
     let cancel = false; // should we cancel the packet sniffing?
     let filter = "" // filter the user can set to display certain packets
     let allPackets = []; // contains all packets sniffed
+    let packetsDisplayed = 0;
 
     $: if (running == true){
         bColor = "#e17878";
@@ -96,6 +97,7 @@
         }
         if (matchesFilters == true){
             jQuery("#sniffedPackets").prepend("<tr><td>" + (i+1) + "</td><td>" + packets.application[i].timeCaptured + "</td><td>" + packets.application[i].transport[0].network[0].source + "</td><td>" + packets.application[i].transport[0].network[0].destination + "</td><td>" + packets.application[i].protocol + "</td><td>" + packets.application[i].transport[0].network[0].dataLink[0].physical[0].frameLength + "</td><td>" + packets.application[i].method + "</td></tr>");
+            packetsDisplayed += 1;
         }
     }
 
@@ -119,6 +121,7 @@
         filter = document.getElementById("filter").value;
         const individualFilters = filter.split(" && ");
         jQuery("#sniffedPackets").empty();
+        packetsDisplayed = 0;
         if (filter !== ""){
             for (let m = 0; m < allPackets.length; m++){
                 let matchesFilters = true;
@@ -133,12 +136,17 @@
                 }
                 if (matchesFilters == true){
                     jQuery("#sniffedPackets").prepend("<tr><td>" + allPackets[m][0] + "</td><td>" + allPackets[m][1] + "</td><td>" + allPackets[m][2] + "</td><td>" + allPackets[m][3] + "</td><td>" + allPackets[m][4] + "</td><td>" + allPackets[m][5] + "</td><td>" + allPackets[m][6] + "</td></tr>");
+                    packetsDisplayed += 1;
                 }
+            }
+            if (packetsDisplayed == 0){
+                jQuery("#sniffedPackets").prepend("<tr><td></td><td></td><td></td><td>No packets match the filter!</td></tr>");
             }
         }
         else{
             for (let k = 0; k < allPackets.length; k++){
                 jQuery("#sniffedPackets").prepend("<tr><td>" + allPackets[k][0] + "</td><td>" + allPackets[k][1] + "</td><td>" + allPackets[k][2] + "</td><td>" + allPackets[k][3] + "</td><td>" + allPackets[k][4] + "</td><td>" + allPackets[k][5] + "</td><td>" + allPackets[k][6] + "</td></tr>");
+                packetsDisplayed += 1;
             }
         }
     }
@@ -146,13 +154,16 @@
     function removeFilter(){
         filter = "";
         jQuery("#sniffedPackets").empty();
+        packetsDisplayed = 0;
         for (let k = 0; k < allPackets.length; k++){
             jQuery("#sniffedPackets").prepend("<tr><td>" + allPackets[k][0] + "</td><td>" + allPackets[k][1] + "</td><td>" + allPackets[k][2] + "</td><td>" + allPackets[k][3] + "</td><td>" + allPackets[k][4] + "</td><td>" + allPackets[k][5] + "</td><td>" + allPackets[k][6] + "</td></tr>");
+            packetsDisplayed += 1;
         }
     }
 
     function resetPackets(){
         jQuery("#sniffedPackets").empty();
+        packetsDisplayed = 0;
         allPackets = [];
     }
 </script>
@@ -163,6 +174,7 @@
         <button on:click={runWireshark}> {sniffButtonLabel}</button>
         <input type="text" id="filter"/>
         <button on:click={setFilter}> Set Filter</button>
+        <p>Filter: {filter}</p>
         <button on:click={removeFilter}> Remove Filter</button>
         <button on:click={resetPackets}> Reset Packets</button>
     </div>
