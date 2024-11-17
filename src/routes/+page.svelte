@@ -79,7 +79,22 @@
     }
 
     function sniffPacket(i){
-        jQuery("#sniffedPackets").prepend("<tr><td>" + (i+1) + "</td><td>" + packets.application[i].timeCaptured + "</td><td>" + packets.application[i].transport[0].network[0].source + "</td><td>" + packets.application[i].transport[0].network[0].destination + "</td><td>" + packets.application[i].protocol + "</td><td>" + packets.application[i].transport[0].network[0].dataLink[0].physical[0].frameLength + "</td><td>" + packets.application[i].method + "</td></tr>");
+        const individualFilters = filter.split(" && ");
+        let matchesFilters = true;
+        if (filter !== ""){
+            for (let j = 0; j < individualFilters.length; j++){
+                if (individualFilters[j] === ((i+1)+"") || individualFilters[j] === packets.application[i].timeCaptured || individualFilters[j] === packets.application[i].transport[0].network[0].source || individualFilters[j] === packets.application[i].transport[0].network[0].destination || individualFilters[j] === packets.application[i].protocol || individualFilters[j] === packets.application[i].transport[0].network[0].dataLink[0].physical[0].frameLength || individualFilters[j] === packets.application[i].method){
+
+                }
+                else{
+                    matchesFilters = false;
+                    break;
+                }   
+            }
+        }
+        if (matchesFilters == true){
+            jQuery("#sniffedPackets").prepend("<tr><td>" + (i+1) + "</td><td>" + packets.application[i].timeCaptured + "</td><td>" + packets.application[i].transport[0].network[0].source + "</td><td>" + packets.application[i].transport[0].network[0].destination + "</td><td>" + packets.application[i].protocol + "</td><td>" + packets.application[i].transport[0].network[0].dataLink[0].physical[0].frameLength + "</td><td>" + packets.application[i].method + "</td></tr>");
+        }
     }
 
     function runWireshark(){
@@ -91,7 +106,7 @@
         else{
             running = true;
             let numPackets = Object.keys(packets.application).length;
-            for(let i = 0; i < numPackets; i++) {
+            for (let i = 0; i < numPackets; i++) {
                 setTimeout(function() { if (!cancel) {sniffPacket(i)} }, 500 * i);
             }
             setTimeout(function() { running = false; }, 500 * (numPackets-1));
@@ -100,6 +115,10 @@
     
     function setFilter(){
         filter = document.getElementById("filter").value;
+    }
+
+    function removeFilter(){
+        filter = "";
     }
 
     function resetPackets(){
@@ -113,6 +132,7 @@
         <button on:click={runWireshark}> {sniffButtonLabel}</button>
         <input type="text" id="filter"/>
         <button on:click={setFilter}> Set Filter</button>
+        <button on:click={removeFilter}> Remove Filter</button>
         <button on:click={resetPackets}> Reset Packets</button>
     </div>
     <!-- Top Container -->

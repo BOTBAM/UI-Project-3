@@ -11,7 +11,7 @@ export const packets = {
                                 {
                                     "physical": [
                                         {
-                                            "frameLength": 357 //bytes
+                                            "frameLength": "357" //bytes
                                         }
                                     ],
                                     "type": "IPv4",
@@ -25,9 +25,9 @@ export const packets = {
                         }
                     ],
                     "protocol": "TCP",
-                    "sourcePort": 60251,
-                    "destinationPort": 80,
-                    "payload": 303 //bytes
+                    "sourcePort": "60251",
+                    "destinationPort": "80",
+                    "payload": "303" //bytes
                 },
             ],
             "protocol": "HTTP",
@@ -44,7 +44,7 @@ export const packets = {
                                 {
                                     "physical": [
                                         {
-                                            "frameLength": 312 //bytes
+                                            "frameLength": "312" //bytes
                                         }
                                     ],
                                     "type": "IPv4",
@@ -58,9 +58,9 @@ export const packets = {
                         }
                     ],
                     "protocol": "TCP",
-                    "sourcePort": 80,
-                    "destinationPort": 60251,
-                    "payload": 270 //bytes
+                    "sourcePort": "80",
+                    "destinationPort": "60251",
+                    "payload": "270" //bytes
                 },
             ],
             "protocol": "HTTP",
@@ -76,7 +76,7 @@ export const packets = {
                                 {
                                     "physical": [
                                         {
-                                            "frameLength": 209 //bytes
+                                            "frameLength": "209" //bytes
                                         }
                                     ],
                                     "type": "IPv4",
@@ -90,9 +90,9 @@ export const packets = {
                         }
                     ],
                     "protocol": "TCP",
-                    "sourcePort": 39454,
-                    "destinationPort": 80,
-                    "payload": 158 //bytes
+                    "sourcePort": "39454",
+                    "destinationPort": "80",
+                    "payload": "158" //bytes
                 },
             ],
             "protocol": "HTTP",
@@ -109,7 +109,7 @@ export const packets = {
                                 {
                                     "physical": [
                                         {
-                                            "frameLength": 175 //bytes
+                                            "frameLength": "175" //bytes
                                         }
                                     ],
                                     "type": "IPv4",
@@ -123,9 +123,9 @@ export const packets = {
                         }
                     ],
                     "protocol": "TCP",
-                    "sourcePort": 80,
-                    "destinationPort": 39454,
-                    "payload": 270 //bytes
+                    "sourcePort": "80",
+                    "destinationPort": "39454",
+                    "payload": "270" //bytes
                 },
             ],
             "protocol": "HTTP",
