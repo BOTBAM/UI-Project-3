@@ -1,5 +1,7 @@
 <script>
     import { onMount } from 'svelte';
+    import jQuery from 'jquery';
+    import {packets} from '../data.js';
 
     // Heights and widths as percentages
     let leftWidth = 50; // Width of the left container
@@ -59,16 +61,72 @@
         window.addEventListener('mousemove', onDragWidth);
         window.addEventListener('mouseup', stopDragWidth);
     });
+
+    let running = false; // are packets being sniffed?
+    let bColor = "#4caf50"; // background color for the sniffed packets section
+    let sniffButtonLabel = "Sniff Packets";
+    let cancel = false; // should we cancel the packet sniffing?
+    let filter = ""
+
+    $: if (running == true){
+        bColor = "#e17878";
+        sniffButtonLabel = "Stop Sniffing Packets";
+    }
+
+    $: if (running == false){
+        bColor = "#4caf50";
+        sniffButtonLabel = "Sniff Packets";
+    }
+
+    function sniffPacket(i){
+        jQuery("#packets").prepend("<tr><td>" + (i+1) + "</td><td>" + packets.application[i].timeCaptured + "</td><td>" + packets.application[i].transport[0].network[0].source + "</td><td>" + packets.application[i].transport[0].network[0].destination + "</td><td>" + packets.application[i].protocol + "</td><td>" + packets.application[i].transport[0].network[0].dataLink[0].physical[0].frameLength + "</td><td>" + packets.application[i].method + "</td></tr>");
+    }
+
+    function runWireshark(){
+        if (running == true){
+            cancel = true;
+            setTimeout(function() { running = false; cancel = false; }, 1000);
+            // might need to adjust depending on size of data file
+        }
+        else{
+            running = true;
+            let numPackets = Object.keys(packets.application).length;
+            for(let i = 0; i < numPackets; i++) {
+                setTimeout(function() { if (!cancel) {sniffPacket(i)} }, 500 * i);
+            }
+            setTimeout(function() { running = false; }, 500 * (numPackets-1));
+        }
+    }
+    
+    function setFilter(){
+        filter = document.getElementById("filter").value;
+    }
 </script>
   
 <div class="container">
     <!-- Options Section -->
     <div class="options-bar">
-        Options Section
+        <button on:click={runWireshark}> {sniffButtonLabel}</button>
+        <input type="text" id="filter"/>
+        <button on:click={setFilter}> Set Filter</button>
     </div>
     <!-- Top Container -->
-    <div class="large-container" style="height: {topHeight}%; background-color: #4caf50;">
-    Main Packets Container ({Math.round(topHeight)}%)
+    <div class="large-container" style="height: {topHeight}%; background-color: {bColor}; overflow-y:scroll;">
+        <table id="packets">
+            <thead>
+                <tr>
+                    <th>No.</th>
+                    <th>Time</th>
+                    <th>Source</th>
+                    <th>Destination</th>
+                    <th>Protocol</th>
+                    <th>Length</th>
+                    <th>Info</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
     </div>
 
     <!-- Horizontal Resizer (Height Adjuster) -->
@@ -154,12 +212,22 @@
     .large-container
     {
         width: 100%;
-        display: flex;
+        /*display: flex;*/
         align-items: center;
         justify-content: center;
         color: white;
         outline: #000;
         font-size: 1.5rem;
+    }
+
+    table
+    {
+        width: 100%;
+    }
+
+    th
+    {
+        border: 2px solid black;
     }
 
     .bottom-row
