@@ -187,13 +187,13 @@
     let allPackets = []; // contains all packets sniffed
     let packetsDisplayed = 0;
 
-    $: if (running == true) {
-        bColor = "#e17878";
+    $: if (running == true){
+        bColor = "#b8ffa7";
         sniffButtonLabel = "Stop Sniffing Packets";
     }
 
-    $: if (running == false) {
-        bColor = "#4caf50";
+    $: if (running == false){
+        bColor = "#ffffff";
         sniffButtonLabel = "Sniff Packets";
     }
 
@@ -272,13 +272,13 @@
                     if (!cancel) {
                         sniffPacket(i);
                     }
-                }, 500 * i);
+                }, 100 * i);
             }
             setTimeout(
                 function () {
                     running = false;
                 },
-                500 * (numPackets - 1),
+                100 * (numPackets - 1),
             );
         }
     }
@@ -401,12 +401,12 @@
 <div class="container">
     <!-- Options Section -->
     <div class="options-bar">
-        <button on:click={runWireshark}> {sniffButtonLabel}</button>
-        <input type="text" id="filter" />
-        <button on:click={setFilter}> Set Filter</button>
-        <p>Filter: {filter}</p>
-        <button on:click={removeFilter}> Remove Filter</button>
-        <button on:click={resetPackets}> Reset Packets</button>
+        <button class="options" id="sniffButton" on:click={runWireshark}> {sniffButtonLabel}</button>
+        <button class="options" id = "reset" on:click={resetPackets}> Reset Packets</button>
+        <button class="options" id="removeFilter" on:click={removeFilter}> Remove Filter</button>
+        <p id="displayedFilter">Filter: {filter}</p>
+        <input type="text" id="filter"/>
+        <button class="options" id="setFilter" on:click={setFilter}> Set Filter</button>
     </div>
 
     <!-- Top Container -->
@@ -515,7 +515,52 @@
         border-bottom: 10px solid rgb(0, 0, 0); /* Add a bottom outline */
     }
 
-    .large-container {
+    .options
+    {
+        position: absolute;
+        width: 150px;
+        height: 32px;
+    }
+
+    #sniffButton
+    {
+        left: 25px;
+    }
+
+    #reset
+    {
+        left: 200px;
+    }
+
+    #removeFilter
+    {
+        right: 795px;
+    }
+
+    #displayedFilter
+    {
+        position: absolute;
+        right: 490px;
+        width: 300px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    #filter
+    {
+        position: absolute;
+        right: 180px;
+        width: 300px;
+    }
+
+    #setFilter
+    {
+        right: 25px;
+    }
+
+    .large-container
+    {
         width: 100%;
         /*display: flex;*/
         align-items: center;
