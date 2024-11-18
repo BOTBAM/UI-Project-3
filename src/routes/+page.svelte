@@ -153,9 +153,9 @@
             running = true;
             let numPackets = Object.keys(packets.application).length;
             for (let i = 0; i < numPackets; i++) {
-                setTimeout(function() { if (!cancel) {sniffPacket(i)} }, 500 * i);
+                setTimeout(function() { if (!cancel) {sniffPacket(i)} }, 100 * i);
             }
-            setTimeout(function() { running = false; }, 500 * (numPackets-1));
+            setTimeout(function() { running = false; }, 100 * (numPackets-1));
         }
     }
     
