@@ -222,7 +222,7 @@
     </div>
 
     <!-- Top Container -->
-    <div class="large-container" style="height: {topHeight}%; background-color: {bColor}; overflow-y:scroll;">
+    <div class="large-container" style="height: {topHeight}%; overflow-y:scroll;">
         <table id="packets">
             <thead>
                 <tr>
@@ -250,10 +250,10 @@
     ></button>
 
     <!-- Bottom Row -->
-    <div class="bottom-row" style="height: {bottomHeight}%; background-color: #f1f1f1;">
+    <div class="bottom-row" style="height: {bottomHeight}%; ">
 
         <!-- Bottom Left Container with Nested Containers -->
-        <div class="small-container" style="width: {leftWidth}%; background-color: #2196f3;">
+        <div class="small-container" style="width: {leftWidth}%; ">
             <div class="nested-container level-1">
                 Level 1
                 <div class="nested-container level-2">
@@ -262,9 +262,6 @@
                         Level 3
                         <div class="nested-container level-4">
                             Level 4
-                            <div class="nested-container level-5">
-                                Level 5
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -284,7 +281,7 @@
 
 
         <!-- Bottom Right Container -->
-        <div class="small-container" style="width: {rightWidth}%; background-color: #ff9800;">
+        <div class="small-container" style="width: {rightWidth}%;">
             Hex Container ({Math.round(rightWidth)}%)
         </div>
     </div>
@@ -313,7 +310,7 @@
         align-items: center;
         justify-content: center;
         font-size: 1rem;
-        border-bottom: 10px solid rgb(0, 0, 0); /* Add a bottom outline */
+        border-bottom: 10px solid rgb(0, 0, 0); /* Adds a bottom outline */
     }
 
     .large-container
@@ -349,7 +346,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        color: white;
+        color: rgb(0, 0, 0);
         font-size: 1.2rem;
         overflow: hidden;
     }
@@ -364,6 +361,12 @@
         color: white;
         font-size: 0.8rem;
         border: 2px solid white;
+    }
+
+    #packets
+    {
+        width: 100%;
+        border: none;
     }
 
     .level-1
@@ -394,33 +397,38 @@
     /* Horizontal Resizer (Height Adjuster) */
     .horizontal-resizer
     {
-        height: 10px;
-        background-color: #000;
+        height: 11px;
+        background-color: #353d2a; 
+        border: none;             
+        outline: none;    
         cursor: ns-resize;
         width: 100%;
-        z-index: 1;
+        z-index: 1;               /* Keeps it on top of adjacent elements */
         position: relative;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1); 
     }
 
-    .horizontal-resizer:hover
+    .horizontal-resizer:focus-visible
     {
-        background-color: #555;
+        outline: 2px solid #4caf50; /* Green outline for focus via keyboard */
+        outline-offset: 2px;       /* Space between outline and element */
     }
 
     /* Vertical Resizer (Width Adjuster) */
     .vertical-resizer
     {
-        width: 10px;
-        background-color: #000;
-        cursor: ew-resize;
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        z-index: 1;
+        width: 7px;
+        background-color: #353d2a; 
+        border: none;             
+        outline: none;            
+        cursor: ew-resize;        
+        z-index: 2;               
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1); 
     }
 
-    .vertical-resizer:hover
+    .vertical-resizer:focus-visible
     {
-        background-color: #555;
+        outline: 2px solid #4caf50; 
+        outline-offset: 2px;      
     }
 </style>
