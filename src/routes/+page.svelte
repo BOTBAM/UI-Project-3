@@ -113,12 +113,12 @@
     let packetsDisplayed = 0;
 
     $: if (running == true){
-        bColor = "#e17878";
+        bColor = "#b8ffa7";
         sniffButtonLabel = "Stop Sniffing Packets";
     }
 
     $: if (running == false){
-        bColor = "#4caf50";
+        bColor = "#ffffff";
         sniffButtonLabel = "Sniff Packets";
     }
 
