@@ -593,20 +593,22 @@
 
 
         <!-- Vertical Resizer (Width Adjuster) -->
-        <button
-            class="vertical-resizer"
-            aria-label="Resize panel width"
-            tabindex="0"
-            on:mousedown={startDragWidth}
-            on:keydown={adjustWidth}
-            style="left: {leftWidth}%;"
-        >
-        </button>
+        {#if rightWidth >= 11}
+            <button
+                class="vertical-resizer"
+                aria-label="Resize panel width"
+                tabindex="0"
+                on:mousedown={startDragWidth}
+                on:keydown={adjustWidth}
+                style="left: {leftWidth}%;"
+            >
+            </button>
+        {/if}
 
 
         <!-- Bottom Right Container -->
         {#if rightWidth < 11}
-            <button on:click={openHex} style="transform: translateY(2%);">
+            <button on:click={openHex} style="">
                 <img src={open_hex} alt="open hex" />
             </button>
         {:else}
