@@ -40,11 +40,6 @@
     let packetsDisplayed = 0;
 
 
-    
-    let hexContent = "";
-    let asciiContent = "";
-
-
     // Expand/Collapse logic
     let collapsed =
     {
@@ -189,6 +184,9 @@
             // ascii
             const asciiCell = document.createElement("td");
             asciiCell.className = "hex-ascii";
+
+            let hexContent = "";
+            let asciiContent = "";
 
             for (let i = 0; i < 16 && offset + i < length; i++) {
                 const byte = Math.floor(Math.random() * 256);
@@ -874,7 +872,6 @@
         color: #333;
         display: flex;
         justify-items: center;
-        margin-left: 11px; 
     }
 
     :global(.hex-table)
