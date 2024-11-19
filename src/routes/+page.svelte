@@ -4,11 +4,20 @@
     import { packets } from "../data.js";
 
     import open_hex from "../assets/open_hex.svg";
-    import close_hex from "../assets/close_hex.svg";
 
     // Importing sample data
     import sampleData from '$lib/sampleData.json'; 
 
+    $: if (running == true)
+    {
+        bColor = "#e17878";
+        sniffButtonLabel = "Stop Sniffing Packets";
+    }
+    else
+    {
+        bColor = "#4caf50";
+        sniffButtonLabel = "Sniff Packets";
+    }
 
     // Heights and widths as percentages
     let leftWidth = 100; // Width of the left container
@@ -29,12 +38,28 @@
     let filter = ""; // filter the user can set to display certain packets
     let allPackets = []; // contains all packets sniffed
     let packetsDisplayed = 0;
+
+
     
+    let hexContent = "";
+    let asciiContent = "";
+
+
+    // Expand/Collapse logic
+    let collapsed =
+    {
+        application: true,
+        transport: true,
+        internet: true,
+        link: true,
+    };
+
     // Reiszing Heights (Horizontal Resizer)
     const startDragHeight = () => (isDraggingHeight = true);
     const stopDragHeight = () => (isDraggingHeight = false);
 
-    const onDragHeight = (event) => {
+    const onDragHeight = (event) =>
+    {
         if (!isDraggingHeight) return;
 
         const totalHeight = window.innerHeight; // Total height of the viewport
@@ -42,7 +67,8 @@
         const newTopHeight = (mouseY / totalHeight) * 100;
         const newBottomHeight = 100 - newTopHeight;
 
-        if (newTopHeight >= 10 && newBottomHeight >= 10) {
+        if (newTopHeight >= 10 && newBottomHeight >= 10)
+        {
             topHeight = newTopHeight;
             bottomHeight = newBottomHeight;
         }
@@ -77,7 +103,8 @@
     const startDragWidth = () => (isDraggingWidth = true);
     const stopDragWidth = () => (isDraggingWidth = false);
 
-    const onDragWidth = (event) => {
+    const onDragWidth = (event) =>
+    {
         if (!isDraggingWidth) return;
         const totalWidth = document.body.offsetWidth;
         const mouseX = event.clientX;
@@ -90,23 +117,30 @@
         }
     };
     // Added keyboard controll of the adjustable separators for user-friendlyness and A11y
-    const adjustWidth = (event) => {
-        if (event.key === "ArrowLeft") {
+    const adjustWidth = (event) =>
+    {
+        if (event.key === "ArrowLeft")
+        {
             const newLeftWidth = Math.max(10, leftWidth - 1);
             const newRightWidth = 100 - newLeftWidth;
             if (newRightWidth >= 4) {
                 leftWidth = newLeftWidth;
                 rightWidth = newRightWidth;
             }
-        } else if (event.key === "ArrowRight") {
+        } 
+        else if (event.key === "ArrowRight")
+        {
             const newLeftWidth = Math.min(90, leftWidth + 1);
             const newRightWidth = 100 - newLeftWidth;
-            if (newRightWidth >= 30) {
-            if (newRightWidth >= 4) {
-                leftWidth = newLeftWidth;
-                rightWidth = newRightWidth;
+            if (newRightWidth >= 30)
+            {
+            if (newRightWidth >= 4)
+                {
+                    leftWidth = newLeftWidth;
+                    rightWidth = newRightWidth;
+                }
             }
-        }
+        } 
     };
 
     const openHex = (event) => {
@@ -156,9 +190,6 @@
             const asciiCell = document.createElement("td");
             asciiCell.className = "hex-ascii";
 
-            let hexContent = "";
-            let asciiContent = "";
-
             for (let i = 0; i < 16 && offset + i < length; i++) {
                 const byte = Math.floor(Math.random() * 256);
 
@@ -190,14 +221,7 @@
         window.addEventListener("mouseup", stopDragWidth);
     });
 
-    // Expand/Collapse logic
-    let collapsed =
-    {
-        application: true,
-        transport: true,
-        internet: true,
-        link: true,
-    };
+
 
     function toggleCollapse(layer)
     {
@@ -228,18 +252,10 @@
 
 
 
-    $: if (running == true)
-    {
-        bColor = "#e17878";
-        sniffButtonLabel = "Stop Sniffing Packets";
-    }
-    else
-    {
-        bColor = "#4caf50";
-        sniffButtonLabel = "Sniff Packets";
-    }
 
-    function sniffPacket(i) {
+
+    function sniffPacket(i)
+    {
         const individualFilters = filter.split(" && ");
         let matchesFilters = true;
         allPackets.push([
@@ -268,14 +284,16 @@
                         packets.application[i].transport[0].network[0]
                             .dataLink[0].physical[0].frameLength ||
                     individualFilters[j] === packets.application[i].method
-                ) {
-                } else {
+                )
+                {
+                }
+                else
+                {
                     matchesFilters = false;
                     break;
                 }
                 }
             }
-        }
         if (matchesFilters == true) {
             if (packetsDisplayed == 0){
                 jQuery("#sniffedPackets").empty();
@@ -300,8 +318,8 @@
             );
             packetsDisplayed += 1;
         }
-    }
-
+    
+    };
     function runWireshark() {
         if (running) {
             cancel = true;
@@ -574,11 +592,7 @@
                 </div>
             </div>
         </div>
-        
-        
-        
-        
-        
+
 
         <!-- Vertical Resizer (Width Adjuster) -->
         <button
