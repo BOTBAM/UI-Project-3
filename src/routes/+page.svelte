@@ -10,12 +10,12 @@
 
     $: if (running == true)
     {
-        bColor = "#e17878";
+        bColor = "#b8ffa7";
         sniffButtonLabel = "Stop Sniffing Packets";
     }
     else
     {
-        bColor = "#4caf50";
+        bColor = "#ffffff";
         sniffButtonLabel = "Sniff Packets";
     }
 
@@ -32,7 +32,7 @@
 
     let hexContainer;
     let running = false; // are packets being sniffed?
-    let bColor = "#4caf50"; // background color for the sniffed packets section
+    let bColor = "#ffffff"; // background color for the sniffed packets section
     let sniffButtonLabel = "Sniff Packets";
     let cancel = false; // should we cancel the packet sniffing?
     let filter = ""; // filter the user can set to display certain packets
@@ -50,7 +50,7 @@
     {
         application: true,
         transport: true,
-        internet: true,
+        network: true,
         link: true,
     };
 
@@ -240,7 +240,7 @@
     // Sequential Fade-in Logic
     function fadeInLayers()
     {
-        const layers = ['application', 'transport', 'internet', 'link'];
+        const layers = ['application', 'transport', 'network', 'link'];
         layers.forEach((layer, index) =>
         {
             setTimeout(() =>
@@ -552,19 +552,19 @@
                         </div>
                     {/if}
         
-                    <!-- Internet Layer (Always Visible as Nested) -->
-                    <div class="nested-container level-3" id="internet-layer" style="background-color: #cbe898;">
+                    <!-- Network Layer (Always Visible as Nested) -->
+                    <div class="nested-container level-3" id="network-layer" style="background-color: #cbe898;">
                         <div class="layer-header">
-                            <span>{sampleData.internet.name}</span>
-                            <button on:click={() => toggleCollapse('internet')}>
-                                {collapsed.internet ? "Expand" : "Collapse"}
+                            <span>{sampleData.network.name}</span>
+                            <button on:click={() => toggleCollapse('network')}>
+                                {collapsed.network ? "Expand" : "Collapse"}
                             </button>
                         </div>
         
-                        <!-- Content of Internet Layer -->
-                        {#if !collapsed.internet}
+                        <!-- Content of Network Layer -->
+                        {#if !collapsed.network}
                             <div class="layer-content">
-                                {#each sampleData.internet.data as item}
+                                {#each sampleData.network.data as item}
                                     <p>{item}</p>
                                 {/each}
                             </div>
@@ -613,8 +613,8 @@
             </button>
         {:else}
             <div
-                class="hex-viewer small-container-right"
-                style="width: {rightWidth}%; background-color: #ff9800;"
+                class="hex-viewer"
+                style="width: {rightWidth}%; background-color: #ffffff;"
                 bind:this={hexContainer}
             ></div>
         {/if}
@@ -622,7 +622,8 @@
 </div>
 
 <style>
-    .container {
+    .container
+    {
         display: flex;
         flex-direction: column;
         align-items: stretch;
@@ -634,7 +635,8 @@
         overflow-y: auto; /* Scrollbar for the outermost container */
     }
 
-    .options-bar {
+    .options-bar
+    {
         width: 100%;
         height: 4%;
         background-color: #333;
@@ -739,29 +741,21 @@
         font-size: 1.5rem;
     }
 
-    table {
+    table
+    {
         width: 100%;
     }
 
-    th {
+    th
+    {
         border: 2px solid black;
     }
 
-    .bottom-row {
+    .bottom-row
+    {
         display: flex;
         width: 100%;
         position: relative;
-    }
-
-    .small-container-right {
-        display: flex;
-        flex-direction: column; /* Allow vertical stacking */
-        align-items: stretch;
-        justify-content: flex-start;
-        color: #322c22;
-        font-size: 1.2rem;
-        overflow: auto; /* Scrollbar for the outermost layer (left section) */
-        padding-left: 10px; /* Add padding on the left side */
     }
 
     .small-container-left
@@ -845,7 +839,8 @@
         position: relative;
     }
 
-    .horizontal-resizer:hover {
+    .horizontal-resizer:hover
+    {
         background-color: #555;
     }
 
@@ -863,7 +858,8 @@
 
 
 
-    .vertical-resizer:hover {
+    .vertical-resizer:hover
+    {
         background-color: #555;
     }
 
@@ -878,13 +874,16 @@
         color: #333;
         display: flex;
         justify-items: center;
+        margin-left: 11px; 
     }
 
-    :global(.hex-table) {
+    :global(.hex-table)
+    {
         border-collapse: collapse;
     }
 
-    :global(.hex-table td) {
+    :global(.hex-table td)
+    {
         padding: 0 4px;
         line-height: 1.2;
         white-space: pre;
