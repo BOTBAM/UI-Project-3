@@ -52,7 +52,7 @@
     // Reiszing Heights (Horizontal Resizer)
     const startDragHeight = () => (isDraggingHeight = true);
     const stopDragHeight = () => (isDraggingHeight = false);
-
+    
     const onDragHeight = (event) =>
     {
         if (!isDraggingHeight) return;
@@ -440,8 +440,7 @@
                 allPackets[k][6] +
                 "</td></tr>"
             );
-            packetsDisplayed += 1;
-            
+            packetsDisplayed += 1; 
         }
     }
 
@@ -640,6 +639,44 @@
         overflow-y: auto; /* Scrollbar for the outermost container */
     }
 
+    button
+    {
+        position: relative; /* Ensure flexibility in layout */
+        display: inline-block; /* Align nicely with other elements */
+        font-size: 14px; /* Modern font size */
+        font-family: 'Verdana', sans-serif;
+        color: #ffffff; /* White text for contrast */
+        background-color: #8ba1b9; /* Vibrant blue as primary color */
+        border: none; /* Remove default borders */
+        border-radius: 6px; /* Rounded corners for a modern look */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+        cursor: pointer; /* Indicate interactability */
+        transition: all 0.3s ease; /* Smooth transitions for hover/active states */
+        text-align: center; /* Center-align text */
+        white-space: nowrap; /* Prevent text wrapping */
+    }
+
+    button:hover
+    {
+        
+        color: #8ba1b9; /* White text for contrast */
+        background-color: #ffffff00; /* Slightly darker shade for hover */
+        border: rgb(255, 255, 255) solid 3px;
+        box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15); /* Enhance shadow on hover */
+    }
+
+    button:active
+    {
+        background-color: #003f7f; /* Even darker shade when pressed */
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Flatten shadow for pressed effect */
+    }
+
+    button:focus
+    {
+        outline: 2px solid #80bdff; /* Accessible focus ring */
+        outline-offset: 2px;
+    }
+
     .options-bar
     {
         width: 100%;
@@ -666,7 +703,8 @@
         padding: 2px 2px; /* Comfortable padding for a sleek look */
         font-size: auto; /* Modern font size */
         height:100%;
-        font-family: 'Verdana-bold', sans-serif;
+        font-family: 'Verdana', sans-serif;
+        font-size: 13px;
         font-weight: bold;
         background-color: #000000; /* Primary blue color */
         color: #ffffff; /* White text for contrast */
@@ -723,14 +761,15 @@
 
     #removeFilter
     {
+        position: absolute;
+        height: 4.1%;
         right: auto;
-        left: 26.5%;
+        left: 62.5%;
         white-space: nowrap;
         overflow: visible;
         width: auto;
         min-width: 150px;
         padding: 10px 20px;
-        
         text-align: center;
     }
    
@@ -744,7 +783,8 @@
         
     }
 
-    table {
+    table
+    {
         width: 100%;
         border-collapse: collapse;
         font-family: 'Verdana', sans-serif;
@@ -755,25 +795,13 @@
         border-radius: 8px;
     }
 
-    th {
+    th
+    {
         background-color: #000000a8; /* Slightly darker header */
         color: #ffffff; /* White text for headers */
         text-align: left;
         padding: 12px 15px;
         font-weight: bold;
-    }
-
-    td {
-        padding: 12px 15px;
-        border-bottom: 1px solid #3a3a4f;
-    }
-
-    tr:nth-child(even) {
-        background-color: #252537; /* Alternate row color */
-    }
-
-    tr:hover td {
-        background-color: #2d2d41; /* Highlight on hover */
     }
 
     .bottom-row
@@ -794,30 +822,33 @@
         padding-right: 10px; /* Add padding on the right side */
         box-sizing: border-box;
         overflow: auto;
-        scrollbar-width: thin; /* Thin scrollbar */
-        scrollbar-color: rgba(0, 0, 0, 0.3) rgba(0, 0, 0, 0.1); /* Thumb and track color */
+
     }
     
-    .small-container-left::-webkit-scrollbar
+    *::-webkit-scrollbar
     {
-        width: 8px; /* Width of vertical scrollbar */
+        scrollbar-width: thin; /* Thin scrollbar */
+        scrollbar-color: rgba(0, 0, 0, 0.057) rgba(255, 255, 255, 0.007); /* Thumb and track color */
+        width: 18px; /* Width of vertical scrollbar */
         height: 8px; /* Height of horizontal scrolblar */
     }
 
-    .small-container-left::-webkit-scrollbar-track
+    *::-webkit-scrollbar-track
     {
         background: rgba(0, 0, 0, 0.1); /* Track color */
         border-radius: 4px; /* Smooth rounded edges */
     }
 
-    .small-container-left::-webkit-scrollbar-thumb
+    *::-webkit-scrollbar-thumb
     {
-        background: rgba(0, 0, 0, 0.3); /* Thumb color */
-        border-radius: 4px; /* Smooth rounded edges */
-        transition: background 0.3s;
+        color: #8ba1b9; /* White text for contrast */
+        background-color: #ffffff00; /* Slightly darker shade for hover */
+        border-radius: 22%;
+        border: rgb(255, 255, 255) solid 3px;
+        box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15); /* Enhance shadow on hover */
     }
 
-    .small-container-left::-webkit-scrollbar-thumb:hover
+    *::-webkit-scrollbar-thumb:hover
     {
         background: rgba(0, 0, 0, 0.5); /* Highlighted on hover */
     }
