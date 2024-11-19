@@ -1,51 +1,72 @@
 {
-    "application":
-    {
+    "application": {
         "name": "Application Layer",
-        "data":
-        [
-            "HTTP GET /index.html HTTP/1.1",
-            "HTTP POST /login HTTP/1.1",
-            "HTTPS Handshake: ClientHello",
-            "DNS Query: google.com",
-            "SMTP: HELO example.com"
+        "data": [
+            "HTTP GET /index.html HTTP/1.1 - Browser requested the homepage of the website",
+            "HTTP POST /login HTTP/1.1 - User submitted login credentials",
+            "HTTPS Handshake: ClientHello - Initiating secure connection with TLS 1.3",
+            "DNS Query: google.com - Resolving domain name to IP address",
+            "SMTP: HELO example.com - Sending mail server identification",
+            "FTP: LIST /home/user/ - Retrieving directory listing from remote server",
+            "SSH: Connection Request from 192.168.1.5 - Secure Shell session initiated",
+            "HTTP GET /api/data.json HTTP/1.1 - Client requesting API data in JSON format",
+            "POP3: RETR message 2 - Retrieving second email from server",
+            "IMAP: FETCH 1 (BODY[]) - Fetching complete email body for message 1",
+            "SNMP: GetRequest OID: 1.3.6.1.2.1.1.1.0 - Requesting device system description",
+            "MQTT: PUBLISH to topic 'sensor/data' - Publishing sensor data to MQTT broker",
+            "HTTPS Handshake: ServerHello - Server responding with session parameters",
+            "WebSocket Upgrade - Switching from HTTP to WebSocket protocol",
+            "REST API: PUT /users/12345 - Updating user data with ID 12345",
+            "HTTP DELETE /posts/6789 - Request to delete post with ID 6789",
+            "HTTP GET /search?q=example HTTP/2 - Querying search results for 'example'",
+            "HTTPS Handshake: Certificate Verify - Validating SSL certificate from server"
         ]
     },
-    "transport":
-    {
+    "transport": {
         "name": "Transport Layer",
-        "data":
-        [
-            "TCP, Src Port: 443, Dest Port: 12345, Seq: 12345, Ack: 67890",
-            "UDP, Src Port: 1234, Dest Port: 53, Length: 512",
-            "TCP, Src Port: 22, Dest Port: 2345, Seq: 67890, Ack: 12345",
-            "SCTP, Stream ID: 0, Seq: 1, Payload Protocol: 1"
+        "data": [
+            "TCP, Src Port: 443, Dest Port: 12345, Seq: 12345, Ack: 67890 - Secure communication over HTTPS",
+            "UDP, Src Port: 1234, Dest Port: 53, Length: 512 - DNS query for resolving domain",
+            "TCP, Src Port: 22, Dest Port: 2345, Seq: 67890, Ack: 12345 - SSH data exchange",
+            "SCTP, Stream ID: 0, Seq: 1, Payload Protocol: 1 - Stream Control Transmission Protocol session",
+            "TCP, Src Port: 8080, Dest Port: 1234, Seq: 98765, Ack: 43210 - HTTP proxy communication",
+            "UDP, Src Port: 161, Dest Port: 1234, Length: 120 - SNMP data exchange",
+            "TCP, Src Port: 25, Dest Port: 2525, Seq: 54321, Ack: 67890 - Mail delivery using SMTP",
+            "UDP, Src Port: 56789, Dest Port: 12345, Length: 64 - Lightweight UDP transmission",
+            "TCP, Src Port: 995, Dest Port: 1024, Seq: 1024, Ack: 2048 - Encrypted POP3 email retrieval",
+            "UDP, Src Port: 8000, Dest Port: 9000, Length: 1024 - Streaming media over RTP",
+            "TCP, Src Port: 8443, Dest Port: 443, Seq: 45678, Ack: 87654 - Secure WebSocket handshake"
         ]
     },
-    "network":
-    {
+    "network": {
         "name": "Network Layer",
-        "data":
-        [
-            "IP, Src: 192.168.1.1, Dest: 192.168.1.2, TTL: 64",
-            "IPv6, Src: fe80::1, Dest: fe80::2, Hop Limit: 255",
-            "ICMP, Type: Echo Request, Code: 0",
-            "ICMP, Type: Echo Request, Code: 0",
-            "ICMP, Type: Echo Request, Code: 0",
-            "ICMP, Type: Echo Request, Code: 0",
-            "ICMP, Type: Echo Request, Code: 0",
-            "IP, Src: 10.0.0.1, Dest: 10.0.0.2, TTL: 128"
+        "data": [
+            "IP, Src: 192.168.1.1, Dest: 192.168.1.2, TTL: 64 - Communication between local devices",
+            "IPv6, Src: fe80::1, Dest: fe80::2, Hop Limit: 255 - IPv6 local network transmission",
+            "ICMP, Type: Echo Request, Code: 0 - Ping request for latency check",
+            "IP, Src: 10.0.0.1, Dest: 10.0.0.2, TTL: 128 - Data transmission over private network",
+            "ARP, Who-has 192.168.1.100? Tell 192.168.1.1 - Resolving MAC address for IP",
+            "RIP, Update from 192.168.1.1, Metrics: 1 - Routing Information Protocol update",
+            "BGP, Update AS Path: 12345 -> 54321 - Border Gateway Protocol path update",
+            "IP, Src: 172.16.0.1, Dest: 172.16.0.2, TTL: 32 - Data transfer within a subnet",
+            "ICMP, Type: Destination Unreachable, Code: 3 - Error message for unreachable destination",
+            "IP, Src: 192.0.2.1, Dest: 192.0.2.2, TTL: 255 - Inter-router communication"
         ]
     },
-    "link":
-    {
+    "link": {
         "name": "Link Layer",
-        "data":
-        [
-            "Ethernet, Src MAC: 00:1A:2B:3C:4D:5E, Dest MAC: 00:5E:4D:3C:2B:1A",
-            "Ethernet, Src MAC: 00:AA:BB:CC:DD:EE, Dest MAC: 00:EE:DD:CC:BB:AA",
-            "802.11 Wi-Fi, SSID: MyNetwork, Signal Strength: -45dBm",
-            "Ethernet, VLAN: 100, Src MAC: 00:12:34:56:78:9A, Dest MAC: 00:9A:78:56:34:12"
+        "data": [
+            "Ethernet, Src MAC: 00:1A:2B:3C:4D:5E, Dest MAC: 00:5E:4D:3C:2B:1A - Ethernet frame for LAN communication",
+            "Ethernet, Src MAC: 00:AA:BB:CC:DD:EE, Dest MAC: 00:EE:DD:CC:BB:AA - Data transfer over Ethernet",
+            "802.11 Wi-Fi, SSID: MyNetwork, Signal Strength: -45dBm - Wi-Fi connection quality metrics",
+            "Ethernet, VLAN: 100, Src MAC: 00:12:34:56:78:9A, Dest MAC: 00:9A:78:56:34:12 - VLAN-tagged Ethernet frame",
+            "Ethernet, Frame Type: IPv4, Frame Length: 1514 bytes - IPv4 encapsulated data",
+            "Ethernet, Frame Type: ARP, Frame Length: 60 bytes - Address Resolution Protocol frame",
+            "802.3, Src MAC: 11:22:33:44:55:66, Dest MAC: 66:55:44:33:22:11 - IEEE 802.3 frame",
+            "Ethernet, VLAN: 200, Src MAC: 22:33:44:55:66:77, Dest MAC: 77:66:55:44:33:22 - VLAN communication in Ethernet",
+            "802.11 Wi-Fi, SSID: GuestNetwork, Signal Strength: -60dBm - Alternative Wi-Fi connection metrics",
+            "Ethernet, Frame Type: IPv6, Frame Length: 1280 bytes - IPv6 encapsulated data transfer",
+            "Ethernet, Frame Type: MPLS, Frame Length: 1522 bytes - Multiprotocol Label Switching data"
         ]
     }
 }

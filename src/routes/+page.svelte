@@ -420,6 +420,8 @@
         filter = "";
         jQuery("#sniffedPackets").empty();
         packetsDisplayed = 0;
+        const filterInput = document.getElementById("filter");
+        filterInput.value = "";
         for (let k = 0; k < allPackets.length; k++) {
             jQuery("#sniffedPackets").prepend(
                 "<tr><td>" +
@@ -439,6 +441,7 @@
                 "</td></tr>"
             );
             packetsDisplayed += 1;
+            
         }
     }
 
@@ -463,12 +466,11 @@
 <div class="container">
     <!-- Options Section -->
     <div class="options-bar">
-        <button class="options" id="sniffButton" on:click={runWireshark}> {sniffButtonLabel}</button>
-        <button class="options" id = "reset" on:click={resetPackets}> Reset Packets</button>
-        <button class="options" id="removeFilter" on:click={removeFilter}> Remove Filter</button>
-        <p id="displayedFilter">Filter: {filter}</p>
+        <button class="options-top" id="sniffButton" on:click={runWireshark}> {sniffButtonLabel}</button>
+        <button class="options-top" id="reset" on:click={resetPackets}> Reset Packets</button>
+        <button class="options-top" id="removeFilter" on:click={removeFilter}> Remove Filter: {filter}</button>
         <input type="text" id="filter"/>
-        <button class="options" id="setFilter" on:click={setFilter}> Set Filter</button>
+        <button class="options-top" id="setFilter" on:click={setFilter}> Set Filter</button>
     </div>
 
     <!-- Top Container -->
@@ -632,7 +634,7 @@
         align-items: stretch;
         justify-content: flex-start;
         width: 100%;
-        height: 100vh;
+        height: 97.5vh;
         margin: 0 auto;
         outline: 10px solid black;
         overflow-y: auto; /* Scrollbar for the outermost container */
@@ -641,8 +643,8 @@
     .options-bar
     {
         width: 100%;
-        height: 4%;
-        background-color: #333;
+        height: 5%;
+        background-color: #93a4c4;
         color: rgb(255, 255, 255);
         display: flex;
         align-items: center;
@@ -651,89 +653,87 @@
         border-bottom: 10px solid rgb(0, 0, 0);
     }
 
-    .options
+    .options-top
     {
         position: absolute;
-        width: 150px;
-        height: 32px;
+        width: 7%;
+        height: 5%;
     }
 
-    #reset
+    button.options-top
     {
-        left: 200px;
+        position: relative; /* Default for flexible positioning */
+        padding: 2px 2px; /* Comfortable padding for a sleek look */
+        font-size: auto; /* Modern font size */
+        height:100%;
+        font-family: 'Verdana-bold', sans-serif;
+        font-weight: bold;
+        background-color: #000000; /* Primary blue color */
+        color: #ffffff; /* White text for contrast */
+        border: none; /* Remove border for modern design */
+        border-radius: 1px; /* Subtle rounded corners */
+        box-shadow: 0 4px 11px rgb(0, 0, 0); /* Soft shadow for depth */
+        transition: all 0.3s ease; /* Smooth transitions for hover effects */
+        cursor: pointer; /* Indicate interactability */
     }
 
-    #removeFilter
+    button.options-top:hover
     {
-        right: 795px;
+        background-color: #93a4c4; /* Slightly darker shade on hover */
+        color: #ffffff;
+        box-shadow: 0 6px 8px rgba(255, 255, 255, 0.15); /* Enhance shadow on hover */
+        transform: translateY(-2px);
+        transform: translateX(-2px); /* Lift the button slightly */
     }
 
-    #displayedFilter
+    button.options-top:active
     {
-        position: absolute;
-        right: 490px;
-        width: 300px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
+        background-color: #000000; /* Even darker shade when pressed */
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Flatten shadow */
+        transform: translateY(1px);
+        transform: translateX(1px); /* Create pressed effect */
     }
 
+    button.options-top:focus
+    {
+        outline: 2px solid #93a4c4; /* Focus ring for accessibility */
+        outline-offset: 2px;
+    }
     #filter
     {
-        position: absolute;
-        right: 180px;
-        width: 300px;
+        left: 162%;
+        width: 15%
     }
 
     #setFilter
     {
-        right: 25px;
+        right: 24%;
     }
-
-    .options
-    {
-        position: absolute;
-        width: 150px;
-        height: 32px;
-    }
+    
 
     #sniffButton
     {
-        left: 25px;
+        left:-25.5%;
     }
 
     #reset
     {
-        left: 200px;
+        left:-24%;
     }
 
     #removeFilter
     {
-        right: 795px;
-    }
-
-    #displayedFilter
-    {
-        position: absolute;
-        right: 490px;
-        width: 300px;
-        overflow: hidden;
-        text-overflow: ellipsis;
+        right: auto;
+        left: 26.5%;
         white-space: nowrap;
+        overflow: visible;
+        width: auto;
+        min-width: 150px;
+        padding: 10px 20px;
+        
+        text-align: center;
     }
-
-    #filter
-    {
-        position: absolute;
-        right: 180px;
-        width: 300px;
-    }
-
-    #setFilter
-    {
-        right: 25px;
-    }
-
+   
     .large-container
     {
         width: 100%;
@@ -741,17 +741,39 @@
         justify-content: flex-start;
         color: rgb(0, 0, 0);
         outline: #000;
-        font-size: 1.5rem;
+        
     }
 
-    table
-    {
+    table {
         width: 100%;
+        border-collapse: collapse;
+        font-family: 'Verdana', sans-serif;
+        font-size: 14px;
+        color: #000000; /* Light text color */
+        background-color: #93a4c49c; /* Dark background */
+        border: 1px solid #3a3a4f;
+        border-radius: 8px;
     }
 
-    th
-    {
-        border: 2px solid black;
+    th {
+        background-color: #000000a8; /* Slightly darker header */
+        color: #ffffff; /* White text for headers */
+        text-align: left;
+        padding: 12px 15px;
+        font-weight: bold;
+    }
+
+    td {
+        padding: 12px 15px;
+        border-bottom: 1px solid #3a3a4f;
+    }
+
+    tr:nth-child(even) {
+        background-color: #252537; /* Alternate row color */
+    }
+
+    tr:hover td {
+        background-color: #2d2d41; /* Highlight on hover */
     }
 
     .bottom-row
@@ -833,7 +855,8 @@
 
 
     /* Horizontal Resizer (Height Adjuster) */
-    .horizontal-resizer {
+    .horizontal-resizer
+    {
         height: 10px;
         background-color: #000;
         cursor: ns-resize;
@@ -848,7 +871,8 @@
     }
 
     /* Vertical Resizer (Width Adjuster) */
-    .vertical-resizer {
+    .vertical-resizer
+    {
         width: 10px;
         background-color: #000;
         cursor: ew-resize;
@@ -867,7 +891,8 @@
     }
 
     /* HEX */
-    .hex-viewer {
+    .hex-viewer
+    {
         width: 100%;
         height: 100%;
         overflow: auto;
@@ -906,4 +931,5 @@
     :global(.hex-ascii) {
         color: #666;
     }
+    
 </style>
