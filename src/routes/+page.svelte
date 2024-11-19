@@ -6,11 +6,16 @@
     import open_hex from "../assets/open_hex.svg";
     import close_hex from "../assets/close_hex.svg";
 
+    // Importing sample data
+    import sampleData from '$lib/sampleData.json'; 
+
+
     // Heights and widths as percentages
     let leftWidth = 100; // Width of the left container
     let rightWidth = 0; // Width of the right container
     let topHeight = 50; // Height of the top container
     let bottomHeight = 50; // Height of the bottom row
+
 
     let isDraggingHeight = false; // For resizing heights (up and down)
     let isDraggingWidth = false; // For resizing widths (left and right)
@@ -24,7 +29,6 @@
 
         const totalHeight = window.innerHeight; // Total height of the viewport
         const mouseY = event.clientY;
-
         const newTopHeight = (mouseY / totalHeight) * 100;
         const newBottomHeight = 100 - newTopHeight;
 
@@ -66,18 +70,15 @@
 
     const onDragWidth = (event) => {
         if (!isDraggingWidth) return;
-
-        const totalWidth = document.body.offsetWidth; // Total width of the viewport
+        const totalWidth = document.body.offsetWidth;
         const mouseX = event.clientX;
-
         const newLeftWidth = (mouseX / totalWidth) * 100;
         const newRightWidth = 100 - newLeftWidth;
-
-        if (newLeftWidth >= 10 && newRightWidth >= 4)
-            {
-                leftWidth = newLeftWidth;
-                rightWidth = newRightWidth;
-            }
+        if (newLeftWidth >= 25 && newRightWidth >= 25)
+        {
+            leftWidth = newLeftWidth;
+            rightWidth = newRightWidth;
+        }
     };
     // Added keyboard controll of the adjustable separators for user-friendlyness and A11y
     const adjustWidth = (event) => {
@@ -91,6 +92,7 @@
         } else if (event.key === "ArrowRight") {
             const newLeftWidth = Math.min(90, leftWidth + 1);
             const newRightWidth = 100 - newLeftWidth;
+            if (newRightWidth >= 30) {
             if (newRightWidth >= 4) {
                 leftWidth = newLeftWidth;
                 rightWidth = newRightWidth;
@@ -179,6 +181,42 @@
         window.addEventListener("mouseup", stopDragWidth);
     });
 
+    // Expand/Collapse logic
+    let collapsed =
+    {
+        application: true,
+        transport: true,
+        internet: true,
+        link: true,
+    };
+
+    function toggleCollapse(layer)
+    {
+        collapsed[layer] = !collapsed[layer];
+    }
+
+    function toggleAll()
+    {
+        const anyExpanded = Object.values(collapsed).some(state => !state);
+        for (let key in collapsed)
+        {
+            collapsed[key] = anyExpanded;
+        }
+    }
+
+    // Sequential Fade-in Logic
+    function fadeInLayers()
+    {
+        const layers = ['application', 'transport', 'internet', 'link'];
+        layers.forEach((layer, index) =>
+        {
+            setTimeout(() =>
+            {
+                document.getElementById(`${layer}-layer`).style.opacity = 1;
+            }, index * 500);
+        });
+    }
+
     let running = false; // are packets being sniffed?
     let bColor = "#4caf50"; // background color for the sniffed packets section
     let sniffButtonLabel = "Sniff Packets";
@@ -187,13 +225,14 @@
     let allPackets = []; // contains all packets sniffed
     let packetsDisplayed = 0;
 
-    $: if (running == true){
+    $: if (running == true)
+    {
         bColor = "#b8ffa7";
         sniffButtonLabel = "Stop Sniffing Packets";
     }
-
-    $: if (running == false){
-        bColor = "#ffffff";
+    else
+    {
+        bColor = "#4caf50";
         sniffButtonLabel = "Sniff Packets";
     }
 
@@ -231,6 +270,7 @@
                     matchesFilters = false;
                     break;
                 }
+                }
             }
         }
         if (matchesFilters == true) {
@@ -260,7 +300,7 @@
     }
 
     function runWireshark() {
-        if (running == true) {
+        if (running) {
             cancel = true;
             setTimeout(function () {
                 running = false;
@@ -269,6 +309,7 @@
             // might need to adjust depending on size of data file
         } else {
             running = true;
+            fadeInLayers(); // Integrate fade-in logic
             let numPackets = Object.keys(packets.application).length;
             for (let i = 0; i < numPackets; i++) {
                 setTimeout(function () {
@@ -309,23 +350,23 @@
                         break;
                     }
                 }
-                if (matchesFilters == true) {
+                if (matchesFilters) {
                     jQuery("#sniffedPackets").prepend(
                         "<tr><td>" +
-                            allPackets[m][0] +
-                            "</td><td>" +
-                            allPackets[m][1] +
-                            "</td><td>" +
-                            allPackets[m][2] +
-                            "</td><td>" +
-                            allPackets[m][3] +
-                            "</td><td>" +
-                            allPackets[m][4] +
-                            "</td><td>" +
-                            allPackets[m][5] +
-                            "</td><td>" +
-                            allPackets[m][6] +
-                            "</td></tr>",
+                        allPackets[m][0] +
+                        "</td><td>" +
+                        allPackets[m][1] +
+                        "</td><td>" +
+                        allPackets[m][2] +
+                        "</td><td>" +
+                        allPackets[m][3] +
+                        "</td><td>" +
+                        allPackets[m][4] +
+                        "</td><td>" +
+                        allPackets[m][5] +
+                        "</td><td>" +
+                        allPackets[m][6] +
+                        "</td></tr>"
                     );
                     packetsDisplayed += 1;
                 }
@@ -360,26 +401,27 @@
     }
 
     function removeFilter() {
+    function removeFilter() {
         filter = "";
         jQuery("#sniffedPackets").empty();
         packetsDisplayed = 0;
         for (let k = 0; k < allPackets.length; k++) {
             jQuery("#sniffedPackets").prepend(
                 "<tr><td>" +
-                    allPackets[k][0] +
-                    "</td><td>" +
-                    allPackets[k][1] +
-                    "</td><td>" +
-                    allPackets[k][2] +
-                    "</td><td>" +
-                    allPackets[k][3] +
-                    "</td><td>" +
-                    allPackets[k][4] +
-                    "</td><td>" +
-                    allPackets[k][5] +
-                    "</td><td>" +
-                    allPackets[k][6] +
-                    "</td></tr>",
+                allPackets[k][0] +
+                "</td><td>" +
+                allPackets[k][1] +
+                "</td><td>" +
+                allPackets[k][2] +
+                "</td><td>" +
+                allPackets[k][3] +
+                "</td><td>" +
+                allPackets[k][4] +
+                "</td><td>" +
+                allPackets[k][5] +
+                "</td><td>" +
+                allPackets[k][6] +
+                "</td></tr>"
             );
             packetsDisplayed += 1;
         }
@@ -443,31 +485,98 @@
         on:mousedown={startDragHeight}
         on:keydown={adjustHeight}
     ></button>
-
     <!-- Bottom Row -->
-    <div
-        class="bottom-row"
-        style="height: {bottomHeight}%; background-color: #f1f1f1;"
-    >
-        <!-- Bottom Left Container with Nested Containers -->
-        <div
-            class="small-container"
-            style="width: {leftWidth}%; background-color: #2196f3;"
-        >
-            <div class="nested-container level-1">
-                Level 1
-                <div class="nested-container level-2">
-                    Level 2
-                    <div class="nested-container level-3">
-                        Level 3
-                        <div class="nested-container level-4">
-                            Level 4
-                            <div class="nested-container level-5">Level 5</div>
+    <div class="bottom-row" style="height: {bottomHeight}%; background-color: #ffffff;">
+        <!-- Bottom Left Container with Layers -->
+        <div class="small-container-left" style="width: {leftWidth}%; background-color: #ffffff;">
+            <!-- Expand/Collapse All Button at the Top Right -->
+            <div class="layer-header" style="justify-content: flex-end; background-color: rgba(0, 0, 0, 0.1);">
+                <button on:click={toggleAll}>
+                    {Object.values(collapsed).some(state => !state) ? "Collapse All" : "Expand All"}
+                </button>
+            </div>
+        
+            <!-- Application Layer -->
+            <div class="nested-container level-1" id="application-layer" style="background-color: #e8a898;">
+                <div class="layer-header">
+                    <span>{sampleData.application.name}</span>
+                    <button on:click={() => toggleCollapse('application')}>
+                        {collapsed.application ? "Expand" : "Collapse"}
+                    </button>
+                </div>
+        
+                <!-- Content of Application Layer -->
+                {#if !collapsed.application}
+                    <div class="layer-content">
+                        {#each sampleData.application.data as item}
+                            <p>{item}</p>
+                        {/each}
+                    </div>
+                {/if}
+        
+                <!-- Transport Layer (Always Visible as Nested) -->
+                <div class="nested-container level-2" id="transport-layer" style="background-color: #e8c898;">
+                    <div class="layer-header" >
+                        <span>{sampleData.transport.name}</span>
+                        <button on:click={() => toggleCollapse('transport')}>
+                            {collapsed.transport ? "Expand" : "Collapse"}
+                        </button>
+                    </div>
+        
+                    <!-- Content of Transport Layer -->
+                    {#if !collapsed.transport}
+                        <div class="layer-content">
+                            {#each sampleData.transport.data as item}
+                                <p>{item}</p>
+                            {/each}
+                        </div>
+                    {/if}
+        
+                    <!-- Internet Layer (Always Visible as Nested) -->
+                    <div class="nested-container level-3" id="internet-layer" style="background-color: #cbe898;">
+                        <div class="layer-header">
+                            <span>{sampleData.internet.name}</span>
+                            <button on:click={() => toggleCollapse('internet')}>
+                                {collapsed.internet ? "Expand" : "Collapse"}
+                            </button>
+                        </div>
+        
+                        <!-- Content of Internet Layer -->
+                        {#if !collapsed.internet}
+                            <div class="layer-content">
+                                {#each sampleData.internet.data as item}
+                                    <p>{item}</p>
+                                {/each}
+                            </div>
+                        {/if}
+        
+                        <!-- Link Layer (Always Visible as Nested) -->
+                        <div class="nested-container level-4" id="link-layer" style="background-color: #98e8d9;">
+                            <div class="layer-header">
+                                <span>{sampleData.link.name}</span>
+                                <button on:click={() => toggleCollapse('link')}>
+                                    {collapsed.link ? "Expand" : "Collapse"}
+                                </button>
+                            </div>
+        
+                            <!-- Content of Link Layer -->
+                            {#if !collapsed.link}
+                                <div class="layer-content">
+                                    {#each sampleData.link.data as item}
+                                        <p>{item}</p>
+                                    {/each}
+                                </div>
+                            {/if}
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+        
+        
+        
+        
+        
 
         <!-- Vertical Resizer (Width Adjuster) -->
         <button
@@ -488,7 +597,7 @@
             </button>
         {:else}
             <div
-                class="hex-viewer small-container"
+                class="hex-viewer small-container-right"
                 style="width: {rightWidth}%; background-color: #ff9800;"
                 bind:this={hexContainer}
             ></div>
@@ -506,6 +615,7 @@
         height: 100vh;
         margin: 0 auto;
         outline: 10px solid black;
+        overflow-y: auto; /* Scrollbar for the outermost container */
     }
 
     .options-bar {
@@ -517,7 +627,51 @@
         align-items: center;
         justify-content: center;
         font-size: 1rem;
-        border-bottom: 10px solid rgb(0, 0, 0); /* Add a bottom outline */
+        border-bottom: 10px solid rgb(0, 0, 0);
+    }
+
+    .options
+    {
+        position: absolute;
+        width: 150px;
+        height: 32px;
+    }
+
+    #sniffButton
+    {
+        left: 25px;
+    }
+
+    #reset
+    {
+        left: 200px;
+    }
+
+    #removeFilter
+    {
+        right: 795px;
+    }
+
+    #displayedFilter
+    {
+        position: absolute;
+        right: 490px;
+        width: 300px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    #filter
+    {
+        position: absolute;
+        right: 180px;
+        width: 300px;
+    }
+
+    #setFilter
+    {
+        right: 25px;
     }
 
     .options
@@ -567,9 +721,8 @@
     .large-container
     {
         width: 100%;
-        /*display: flex;*/
-        align-items: center;
-        justify-content: center;
+        align-items: flex-start;
+        justify-content: flex-start;
         color: rgb(0, 0, 0);
         outline: #000;
         font-size: 1.5rem;
@@ -589,45 +742,87 @@
         position: relative;
     }
 
-    .small-container {
+    .small-container-right {
         display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
+        flex-direction: column; /* Allow vertical stacking */
+        align-items: stretch;
+        justify-content: flex-start;
+        color: #322c22;
         font-size: 1.2rem;
-        overflow: hidden;
+        overflow: auto; /* Scrollbar for the outermost layer (left section) */
+        padding-left: 10px; /* Add padding on the left side */
     }
 
-    .nested-container {
-        width: 80%;
-        height: 80%;
+    .small-container-left
+    {
         display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        justify-content: flex-start;
+        margin: 0;
+        padding-left: 7px;
+        padding-right: 10px; /* Add padding on the right side */
+        box-sizing: border-box;
+        overflow: auto;
+        scrollbar-width: thin; /* Thin scrollbar */
+        scrollbar-color: rgba(0, 0, 0, 0.3) rgba(0, 0, 0, 0.1); /* Thumb and track color */
+    }
+    
+    .small-container-left::-webkit-scrollbar
+    {
+        width: 8px; /* Width of vertical scrollbar */
+        height: 8px; /* Height of horizontal scrolblar */
+    }
+
+    .small-container-left::-webkit-scrollbar-track
+    {
+        background: rgba(0, 0, 0, 0.1); /* Track color */
+        border-radius: 4px; /* Smooth rounded edges */
+    }
+
+    .small-container-left::-webkit-scrollbar-thumb
+    {
+        background: rgba(0, 0, 0, 0.3); /* Thumb color */
+        border-radius: 4px; /* Smooth rounded edges */
+        transition: background 0.3s;
+    }
+
+    .small-container-left::-webkit-scrollbar-thumb:hover
+    {
+        background: rgba(0, 0, 0, 0.5); /* Highlighted on hover */
+    }
+
+    .layer-header
+    {
+        display: flex;
+        justify-content: space-between;
         align-items: center;
-        justify-content: center;
-        color: white;
-        font-size: 0.8rem;
-        border: 2px solid white;
+        padding: 5px;
+        font-weight: bold;
+        background-color: rgba(255, 255, 255, 0.1);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        position: relative; /* Ensure it doesn’t overlap content */
+        z-index: 1;
     }
 
-    .level-1 {
-        background-color: #f44336;
+    .layer-content
+    {
+        padding: 10px;
+        background-color: rgba(255, 255, 255, 0.2);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        margin-top: 5px; /* Add spacing below the header */
     }
 
-    .level-2 {
-        background-color: #e91e63;
+    .nested-container
+    {
+        margin: 10px;
+        padding: 10px;
+        background-color: rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(0, 0, 0, 0.2);
+        border-radius: 8px;
+        overflow-y: auto;
     }
 
-    .level-3 {
-        background-color: #9c27b0;
-    }
-
-    .level-4 {
-        background-color: #673ab7;
-    }
-
-    .level-5 {
-        background-color: #3f51b5;
-    }
 
     /* Horizontal Resizer (Height Adjuster) */
     .horizontal-resizer {
@@ -652,7 +847,10 @@
         top: 0;
         bottom: 0;
         z-index: 1;
+        transform: translateX(-50%); /* Center the resizer on the boundary */
     }
+
+
 
     .vertical-resizer:hover {
         background-color: #555;
