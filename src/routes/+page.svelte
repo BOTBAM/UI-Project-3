@@ -325,7 +325,7 @@
             // might need to adjust depending on size of data file
         } else {
             running = true;
-            fadeInLayers(); // Integrate fade-in logic
+            fadeInLayers(); // Integrate fade-in logic (sadly stopped working after merge =( )
             let numPackets = Object.keys(packets.application).length;
             for (let i = 0; i < numPackets; i++) {
                 setTimeout(function () {
@@ -646,19 +646,18 @@
         font-size: 14px; /* Modern font size */
         font-family: 'Verdana', sans-serif;
         color: #ffffff; /* White text for contrast */
-        background-color: #8ba1b9; /* Vibrant blue as primary color */
+        background-color: #93a4c4; /* Vibrant blue as primary color */
         border: none; /* Remove default borders */
         border-radius: 6px; /* Rounded corners for a modern look */
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
         cursor: pointer; /* Indicate interactability */
-        transition: all 0.3s ease; /* Smooth transitions for hover/active states */
+        transition: all 0.2s ease; /* Smooth transitions for hover/active states */
         text-align: center; /* Center-align text */
         white-space: nowrap; /* Prevent text wrapping */
     }
 
     button:hover
     {
-        
         color: #8ba1b9; /* White text for contrast */
         background-color: #ffffff00; /* Slightly darker shade for hover */
         border: rgb(255, 255, 255) solid 3px;
@@ -667,7 +666,7 @@
 
     button:active
     {
-        background-color: #003f7f; /* Even darker shade when pressed */
+        background-color: #93939300; /* Even darker shade when pressed */
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Flatten shadow for pressed effect */
     }
 
@@ -762,9 +761,9 @@
     #removeFilter
     {
         position: absolute;
-        height: 4.1%;
+        height: 4.5%;
         right: auto;
-        left: 62.5%;
+        left: 62.6%;
         white-space: nowrap;
         overflow: visible;
         width: auto;
@@ -778,9 +777,8 @@
         width: 100%;
         align-items: flex-start;
         justify-content: flex-start;
-        color: rgb(0, 0, 0);
+        color: rgb(255, 255, 255);
         outline: #000;
-        
     }
 
     table
@@ -814,6 +812,10 @@
     .small-container-left
     {
         display: flex;
+        font-family: 'Verdana', sans-serif;
+        color:#191820;
+        font-size: 13px;
+        font-weight: bold;
         flex-direction: column;
         align-items: stretch;
         justify-content: flex-start;
@@ -835,8 +837,8 @@
 
     *::-webkit-scrollbar-track
     {
-        background: rgba(0, 0, 0, 0.1); /* Track color */
-        border-radius: 4px; /* Smooth rounded edges */
+        background: rgba(251, 251, 251, 0); /* Track color */
+        border-radius: 11px; /* Smooth rounded edges */
     }
 
     *::-webkit-scrollbar-thumb
@@ -890,6 +892,7 @@
     {
         height: 10px;
         background-color: #000;
+        border-radius: 1%;
         cursor: ns-resize;
         width: 100%;
         z-index: 1;
@@ -906,12 +909,14 @@
     {
         width: 10px;
         background-color: #000;
+        border-radius: 1%;
         cursor: ew-resize;
         position: absolute;
         top: 0;
         bottom: 0;
         z-index: 1;
         transform: translateX(-50%); /* Center the resizer on the boundary */
+        transition: 0s ease; /* No  transitions for hover/active states */
     }
 
 
@@ -948,18 +953,21 @@
         white-space: pre;
     }
 
-    :global(.hex-offset) {
+    :global(.hex-offset)
+    {
         color: #666;
         width: 70px;
     }
 
-    :global(.hex-values) {
+    :global(.hex-values)
+    {
         color: #333;
         font-family: monospace;
         padding-right: 10px !important;
     }
 
-    :global(.hex-ascii) {
+    :global(.hex-ascii)
+    {
         color: #666;
     }
     
