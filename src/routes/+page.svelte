@@ -105,7 +105,7 @@
         const mouseX = event.clientX;
         const newLeftWidth = (mouseX / totalWidth) * 100;
         const newRightWidth = 100 - newLeftWidth;
-        if (newLeftWidth >= 25 && newRightWidth >= 25)
+        if (newLeftWidth >= 10 && newRightWidth >= 10)
         {
             leftWidth = newLeftWidth;
             rightWidth = newRightWidth;
@@ -118,7 +118,7 @@
         {
             const newLeftWidth = Math.max(10, leftWidth - 1);
             const newRightWidth = 100 - newLeftWidth;
-            if (newRightWidth >= 4) {
+            if (newRightWidth >= 10) {
                 leftWidth = newLeftWidth;
                 rightWidth = newRightWidth;
             }
@@ -127,13 +127,10 @@
         {
             const newLeftWidth = Math.min(90, leftWidth + 1);
             const newRightWidth = 100 - newLeftWidth;
-            if (newRightWidth >= 30)
+            if (newRightWidth >= 10)
             {
-            if (newRightWidth >= 4)
-                {
-                    leftWidth = newLeftWidth;
-                    rightWidth = newRightWidth;
-                }
+                leftWidth = newLeftWidth;
+                rightWidth = newRightWidth;
             }
         } 
     };
@@ -453,7 +450,7 @@
         allPackets = [];
     }
 
-    $: if (rightWidth < 5) {
+    $: if (rightWidth < 11) {
         rightWidth = 0;
         leftWidth = 100;
     }
@@ -507,88 +504,91 @@
     <div class="bottom-row" style="height: {bottomHeight}%; background-color: #ffffff;">
         <!-- Bottom Left Container with Layers -->
         <div class="small-container-left" style="width: {leftWidth}%; background-color: #ffffff;">
-            <!-- Expand/Collapse All Button at the Top Right -->
-            <div class="layer-header" style="justify-content: flex-end; background-color: rgba(0, 0, 0, 0.1);">
-                <button on:click={toggleAll}>
-                    {Object.values(collapsed).some(state => !state) ? "Collapse All" : "Expand All"}
-                </button>
-            </div>
-        
-            <!-- Application Layer -->
-            <div class="nested-container level-1" id="application-layer" style="background-color: #e8a898;">
-                <div class="layer-header">
-                    <span>{sampleData.application.name}</span>
-                    <button on:click={() => toggleCollapse('application')}>
-                        {collapsed.application ? "Expand" : "Collapse"}
+            {#if packetsDisplayed > 0}
+                <!-- Expand/Collapse All Button at the Top Right -->
+                <div class="layer-header" style="justify-content: flex-end; background-color: rgba(0, 0, 0, 0.1);">
+                    <button on:click={toggleAll}>
+                        {Object.values(collapsed).some(state => !state) ? "Collapse All" : "Expand All"}
                     </button>
                 </div>
-        
-                <!-- Content of Application Layer -->
-                {#if !collapsed.application}
-                    <div class="layer-content">
-                        {#each sampleData.application.data as item}
-                            <p>{item}</p>
-                        {/each}
-                    </div>
-                {/if}
-        
-                <!-- Transport Layer (Always Visible as Nested) -->
-                <div class="nested-container level-2" id="transport-layer" style="background-color: #e8c898;">
-                    <div class="layer-header" >
-                        <span>{sampleData.transport.name}</span>
-                        <button on:click={() => toggleCollapse('transport')}>
-                            {collapsed.transport ? "Expand" : "Collapse"}
+            
+                <!-- Application Layer -->
+                <div class="nested-container level-1" id="application-layer" style="background-color: #e8a898;">
+                    <div class="layer-header">
+                        <span>{sampleData.application.name}</span>
+                        <button on:click={() => toggleCollapse('application')}>
+                            {collapsed.application ? "Expand" : "Collapse"}
                         </button>
                     </div>
-        
-                    <!-- Content of Transport Layer -->
-                    {#if !collapsed.transport}
+            
+                    <!-- Content of Application Layer -->
+                    {#if !collapsed.application}
                         <div class="layer-content">
-                            {#each sampleData.transport.data as item}
+                            {#each sampleData.application.data as item}
                                 <p>{item}</p>
                             {/each}
                         </div>
                     {/if}
-        
-                    <!-- Network Layer (Always Visible as Nested) -->
-                    <div class="nested-container level-3" id="network-layer" style="background-color: #cbe898;">
-                        <div class="layer-header">
-                            <span>{sampleData.network.name}</span>
-                            <button on:click={() => toggleCollapse('network')}>
-                                {collapsed.network ? "Expand" : "Collapse"}
+            
+                    <!-- Transport Layer (Always Visible as Nested) -->
+                    <div class="nested-container level-2" id="transport-layer" style="background-color: #e8c898;">
+                        <div class="layer-header" >
+                            <span>{sampleData.transport.name}</span>
+                            <button on:click={() => toggleCollapse('transport')}>
+                                {collapsed.transport ? "Expand" : "Collapse"}
                             </button>
                         </div>
-        
-                        <!-- Content of Network Layer -->
-                        {#if !collapsed.network}
+            
+                        <!-- Content of Transport Layer -->
+                        {#if !collapsed.transport}
                             <div class="layer-content">
-                                {#each sampleData.network.data as item}
+                                {#each sampleData.transport.data as item}
                                     <p>{item}</p>
                                 {/each}
                             </div>
                         {/if}
-        
-                        <!-- Link Layer (Always Visible as Nested) -->
-                        <div class="nested-container level-4" id="link-layer" style="background-color: #98e8d9;">
+            
+                        <!-- Network Layer (Always Visible as Nested) -->
+                        <div class="nested-container level-3" id="network-layer" style="background-color: #cbe898;">
                             <div class="layer-header">
-                                <span>{sampleData.link.name}</span>
-                                <button on:click={() => toggleCollapse('link')}>
-                                    {collapsed.link ? "Expand" : "Collapse"}
+                                <span>{sampleData.network.name}</span>
+                                <button on:click={() => toggleCollapse('network')}>
+                                    {collapsed.network ? "Expand" : "Collapse"}
                                 </button>
                             </div>
-        
-                            <!-- Content of Link Layer -->
-                            {#if !collapsed.link}
+            
+                            <!-- Content of Network Layer -->
+                            {#if !collapsed.network}
                                 <div class="layer-content">
-                                    {#each sampleData.link.data as item}
+                                    {#each sampleData.network.data as item}
                                         <p>{item}</p>
                                     {/each}
                                 </div>
                             {/if}
+            
+                            <!-- Link Layer (Always Visible as Nested) -->
+                            <div class="nested-container level-4" id="link-layer" style="background-color: #98e8d9;">
+                                <div class="layer-header">
+                                    <span>{sampleData.link.name}</span>
+                                    <button on:click={() => toggleCollapse('link')}>
+                                        {collapsed.link ? "Expand" : "Collapse"}
+                                    </button>
+                                </div>
+            
+                                <!-- Content of Link Layer -->
+                                {#if !collapsed.link}
+                                    <div class="layer-content">
+                                        {#each sampleData.link.data as item}
+                                            <p>{item}</p>
+                                        {/each}
+                                    </div>
+                                {/if}
+                            </div>
                         </div>
                     </div>
+                    
                 </div>
-            </div>
+            {/if}
         </div>
 
 
@@ -605,16 +605,19 @@
 
 
         <!-- Bottom Right Container -->
-        {#if rightWidth < 5}
-            <button on:click={openHex}>
+        {#if rightWidth < 11}
+            <button on:click={openHex} style="transform: translateY(2%);">
                 <img src={open_hex} alt="open hex" />
             </button>
         {:else}
+            {#if packetsDisplayed > 0}
             <div
                 class="hex-viewer"
                 style="width: {rightWidth}%; background-color: #ffffff;"
                 bind:this={hexContainer}
             ></div>
+
+            {/if}
         {/if}
     </div>
 </div>
@@ -871,7 +874,8 @@
         background: #fff;
         color: #333;
         display: flex;
-        justify-content: center;
+        justify-content: left;
+        padding-left: 10px
     }
 
     :global(.hex-table)
