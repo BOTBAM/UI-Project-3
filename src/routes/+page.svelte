@@ -871,7 +871,7 @@
         background: #fff;
         color: #333;
         display: flex;
-        justify-items: center;
+        justify-content: center;
     }
 
     :global(.hex-table)
