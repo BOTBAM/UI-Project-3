@@ -20,6 +20,16 @@
     let isDraggingHeight = false; // For resizing heights (up and down)
     let isDraggingWidth = false; // For resizing widths (left and right)
 
+
+    let hexContainer;
+    let running = false; // are packets being sniffed?
+    let bColor = "#4caf50"; // background color for the sniffed packets section
+    let sniffButtonLabel = "Sniff Packets";
+    let cancel = false; // should we cancel the packet sniffing?
+    let filter = ""; // filter the user can set to display certain packets
+    let allPackets = []; // contains all packets sniffed
+    let packetsDisplayed = 0;
+    
     // Reiszing Heights (Horizontal Resizer)
     const startDragHeight = () => (isDraggingHeight = true);
     const stopDragHeight = () => (isDraggingHeight = false);
@@ -62,7 +72,6 @@
         }
     };
 
-    let hexContainer;
 
     // Resizing Widths  (Vertical Resizer)
     const startDragWidth = () => (isDraggingWidth = true);
@@ -217,17 +226,11 @@
         });
     }
 
-    let running = false; // are packets being sniffed?
-    let bColor = "#4caf50"; // background color for the sniffed packets section
-    let sniffButtonLabel = "Sniff Packets";
-    let cancel = false; // should we cancel the packet sniffing?
-    let filter = ""; // filter the user can set to display certain packets
-    let allPackets = []; // contains all packets sniffed
-    let packetsDisplayed = 0;
+
 
     $: if (running == true)
     {
-        bColor = "#b8ffa7";
+        bColor = "#e17878";
         sniffButtonLabel = "Stop Sniffing Packets";
     }
     else
@@ -634,11 +637,6 @@
         position: absolute;
         width: 150px;
         height: 32px;
-    }
-
-    #sniffButton
-    {
-        left: 25px;
     }
 
     #reset
