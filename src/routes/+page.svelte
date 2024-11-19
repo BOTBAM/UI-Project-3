@@ -401,7 +401,6 @@
     }
 
     function removeFilter() {
-    function removeFilter() {
         filter = "";
         jQuery("#sniffedPackets").empty();
         packetsDisplayed = 0;
