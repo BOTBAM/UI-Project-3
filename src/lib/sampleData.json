@@ -1,0 +1,51 @@
+{
+    "application":
+    {
+        "name": "Application Layer",
+        "data":
+        [
+            "HTTP GET /index.html HTTP/1.1",
+            "HTTP POST /login HTTP/1.1",
+            "HTTPS Handshake: ClientHello",
+            "DNS Query: google.com",
+            "SMTP: HELO example.com"
+        ]
+    },
+    "transport":
+    {
+        "name": "Transport Layer",
+        "data":
+        [
+            "TCP, Src Port: 443, Dest Port: 12345, Seq: 12345, Ack: 67890",
+            "UDP, Src Port: 1234, Dest Port: 53, Length: 512",
+            "TCP, Src Port: 22, Dest Port: 2345, Seq: 67890, Ack: 12345",
+            "SCTP, Stream ID: 0, Seq: 1, Payload Protocol: 1"
+        ]
+    },
+    "internet":
+    {
+        "name": "Internet Layer",
+        "data":
+        [
+            "IP, Src: 192.168.1.1, Dest: 192.168.1.2, TTL: 64",
+            "IPv6, Src: fe80::1, Dest: fe80::2, Hop Limit: 255",
+            "ICMP, Type: Echo Request, Code: 0",
+            "ICMP, Type: Echo Request, Code: 0",
+            "ICMP, Type: Echo Request, Code: 0",
+            "ICMP, Type: Echo Request, Code: 0",
+            "ICMP, Type: Echo Request, Code: 0",
+            "IP, Src: 10.0.0.1, Dest: 10.0.0.2, TTL: 128"
+        ]
+    },
+    "link":
+    {
+        "name": "Link Layer",
+        "data":
+        [
+            "Ethernet, Src MAC: 00:1A:2B:3C:4D:5E, Dest MAC: 00:5E:4D:3C:2B:1A",
+            "Ethernet, Src MAC: 00:AA:BB:CC:DD:EE, Dest MAC: 00:EE:DD:CC:BB:AA",
+            "802.11 Wi-Fi, SSID: MyNetwork, Signal Strength: -45dBm",
+            "Ethernet, VLAN: 100, Src MAC: 00:12:34:56:78:9A, Dest MAC: 00:9A:78:56:34:12"
+        ]
+    }
+}

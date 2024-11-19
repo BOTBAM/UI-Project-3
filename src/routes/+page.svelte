@@ -3,11 +3,16 @@
     import jQuery from 'jquery';
     import {packets} from '../data.js';
 
+    // Importing sample data
+    import sampleData from '$lib/sampleData.json'; 
+
+
     // Heights and widths as percentages
     let leftWidth = 70; // Width of the left container
     let rightWidth = 30; // Width of the right container
     let topHeight = 50; // Height of the top container
     let bottomHeight = 50; // Height of the bottom row
+
 
     let isDraggingHeight = false; // For resizing heights (up and down)
     let isDraggingWidth = false; // For resizing widths (left and right)
@@ -22,7 +27,6 @@
 
         const totalHeight = window.innerHeight; // Total height of the viewport
         const mouseY = event.clientY;
-
         const newTopHeight = (mouseY / totalHeight) * 100;
         const newBottomHeight = 100 - newTopHeight;
 
@@ -60,36 +64,31 @@
     // Resizing Widths  (Vertical Resizer)
     const startDragWidth = () => (isDraggingWidth = true);
     const stopDragWidth = () => (isDraggingWidth = false);
-
-    const onDragWidth = (event) =>
-    {
+    const onDragWidth = (event) => {
         if (!isDraggingWidth) return;
-
-        const totalWidth = document.body.offsetWidth; // Total width of the viewport
+        const totalWidth = document.body.offsetWidth;
         const mouseX = event.clientX;
-
         const newLeftWidth = (mouseX / totalWidth) * 100;
         const newRightWidth = 100 - newLeftWidth;
-
-        if (newLeftWidth >= 10 && newRightWidth >= 10)
-            {
-                leftWidth = newLeftWidth;
-                rightWidth = newRightWidth;
-            }
+        if (newLeftWidth >= 25 && newRightWidth >= 25)
+        {
+            leftWidth = newLeftWidth;
+            rightWidth = newRightWidth;
+        }
     };
     // Added keyboard controll of the adjustable separators for user-friendlyness and A11y
     const adjustWidth = (event) => {
         if (event.key === "ArrowLeft") {
             const newLeftWidth = Math.max(10, leftWidth - 1);
             const newRightWidth = 100 - newLeftWidth;
-            if (newRightWidth >= 10) {
+            if (newRightWidth >= 30) {
                 leftWidth = newLeftWidth;
                 rightWidth = newRightWidth;
             }
         } else if (event.key === "ArrowRight") {
             const newLeftWidth = Math.min(90, leftWidth + 1);
             const newRightWidth = 100 - newLeftWidth;
-            if (newRightWidth >= 10) {
+            if (newRightWidth >= 30) {
                 leftWidth = newLeftWidth;
                 rightWidth = newRightWidth;
             }
@@ -104,6 +103,42 @@
         window.addEventListener('mouseup', stopDragWidth);
     });
 
+    // Expand/Collapse logic
+    let collapsed =
+    {
+        application: true,
+        transport: true,
+        internet: true,
+        link: true,
+    };
+
+    function toggleCollapse(layer)
+    {
+        collapsed[layer] = !collapsed[layer];
+    }
+
+    function toggleAll()
+    {
+        const anyExpanded = Object.values(collapsed).some(state => !state);
+        for (let key in collapsed)
+        {
+            collapsed[key] = anyExpanded;
+        }
+    }
+
+    // Sequential Fade-in Logic
+    function fadeInLayers()
+    {
+        const layers = ['application', 'transport', 'internet', 'link'];
+        layers.forEach((layer, index) =>
+        {
+            setTimeout(() =>
+            {
+                document.getElementById(`${layer}-layer`).style.opacity = 1;
+            }, index * 500);
+        });
+    }
+
     let running = false; // are packets being sniffed?
     let bColor = "#4caf50"; // background color for the sniffed packets section
     let sniffButtonLabel = "Sniff Packets";
@@ -112,98 +147,195 @@
     let allPackets = []; // contains all packets sniffed
     let packetsDisplayed = 0;
 
-    $: if (running == true){
+    $: if (running == true)
+    {
         bColor = "#e17878";
         sniffButtonLabel = "Stop Sniffing Packets";
     }
-
-    $: if (running == false){
+    else
+    {
         bColor = "#4caf50";
         sniffButtonLabel = "Sniff Packets";
     }
 
-    function sniffPacket(i){
+    function sniffPacket(i) {
         const individualFilters = filter.split(" && ");
         let matchesFilters = true;
-        allPackets.push([((i+1)+""), packets.application[i].timeCaptured, packets.application[i].transport[0].network[0].source, packets.application[i].transport[0].network[0].destination, packets.application[i].protocol, packets.application[i].transport[0].network[0].dataLink[0].physical[0].frameLength, packets.application[i].method]);
-        if (filter !== ""){
-            for (let j = 0; j < individualFilters.length; j++){
-                if (individualFilters[j] === ((i+1)+"") || individualFilters[j] === packets.application[i].timeCaptured || individualFilters[j] === packets.application[i].transport[0].network[0].source || individualFilters[j] === packets.application[i].transport[0].network[0].destination || individualFilters[j] === packets.application[i].protocol || individualFilters[j] === packets.application[i].transport[0].network[0].dataLink[0].physical[0].frameLength || individualFilters[j] === packets.application[i].method){
-
-                }
-                else{
+        allPackets.push([
+            ((i + 1) + ""),
+            packets.application[i].timeCaptured,
+            packets.application[i].transport[0].network[0].source,
+            packets.application[i].transport[0].network[0].destination,
+            packets.application[i].protocol,
+            packets.application[i].transport[0].network[0].dataLink[0].physical[0].frameLength,
+            packets.application[i].method
+        ]);
+        if (filter !== "") {
+            for (let j = 0; j < individualFilters.length; j++) {
+                if (
+                    individualFilters[j] === ((i + 1) + "") ||
+                    individualFilters[j] === packets.application[i].timeCaptured ||
+                    individualFilters[j] === packets.application[i].transport[0].network[0].source ||
+                    individualFilters[j] === packets.application[i].transport[0].network[0].destination ||
+                    individualFilters[j] === packets.application[i].protocol ||
+                    individualFilters[j] === packets.application[i].transport[0].network[0].dataLink[0].physical[0].frameLength ||
+                    individualFilters[j] === packets.application[i].method
+                ) {
+                } else {
                     matchesFilters = false;
                     break;
-                }   
+                }
             }
         }
-        if (matchesFilters == true){
-            jQuery("#sniffedPackets").prepend("<tr><td>" + (i+1) + "</td><td>" + packets.application[i].timeCaptured + "</td><td>" + packets.application[i].transport[0].network[0].source + "</td><td>" + packets.application[i].transport[0].network[0].destination + "</td><td>" + packets.application[i].protocol + "</td><td>" + packets.application[i].transport[0].network[0].dataLink[0].physical[0].frameLength + "</td><td>" + packets.application[i].method + "</td></tr>");
+        if (matchesFilters) {
+            jQuery("#sniffedPackets").prepend(
+                "<tr><td>" +
+                (i + 1) +
+                "</td><td>" +
+                packets.application[i].timeCaptured +
+                "</td><td>" +
+                packets.application[i].transport[0].network[0].source +
+                "</td><td>" +
+                packets.application[i].transport[0].network[0].destination +
+                "</td><td>" +
+                packets.application[i].protocol +
+                "</td><td>" +
+                packets.application[i].transport[0].network[0].dataLink[0].physical[0].frameLength +
+                "</td><td>" +
+                packets.application[i].method +
+                "</td></tr>"
+            );
             packetsDisplayed += 1;
         }
     }
 
-    function runWireshark(){
-        if (running == true){
+    function runWireshark() {
+        if (running) {
             cancel = true;
-            setTimeout(function() { running = false; cancel = false; }, 1000);
-            // might need to adjust depending on size of data file
-        }
-        else{
+            setTimeout(function () {
+                running = false;
+                cancel = false;
+            }, 1000);
+        } else {
             running = true;
+            fadeInLayers(); // Integrate fade-in logic
             let numPackets = Object.keys(packets.application).length;
             for (let i = 0; i < numPackets; i++) {
-                setTimeout(function() { if (!cancel) {sniffPacket(i)} }, 500 * i);
+                setTimeout(function () {
+                    if (!cancel) {
+                        sniffPacket(i);
+                    }
+                }, 500 * i);
             }
-            setTimeout(function() { running = false; }, 500 * (numPackets-1));
+            setTimeout(function () {
+                running = false;
+            }, 500 * (numPackets - 1));
         }
     }
-    
-    function setFilter(){
+
+    function setFilter()
+    {
         filter = document.getElementById("filter").value;
         const individualFilters = filter.split(" && ");
         jQuery("#sniffedPackets").empty();
         packetsDisplayed = 0;
-        if (filter !== ""){
-            for (let m = 0; m < allPackets.length; m++){
+        if (filter !== "")
+        {
+            for (let m = 0; m < allPackets.length; m++)
+            {
                 let matchesFilters = true;
-                for (let j = 0; j < individualFilters.length; j++){
-                    if (individualFilters[j] === allPackets[m][0] || individualFilters[j] === allPackets[m][1] || individualFilters[j] === allPackets[m][2] || individualFilters[j] === allPackets[m][3] || individualFilters[j] === allPackets[m][4] || individualFilters[j] === allPackets[m][5] || individualFilters[j] === allPackets[m][6]){
-
-                    }
-                    else{
+                for (let j = 0; j < individualFilters.length; j++)
+                {
+                    if
+                    (
+                        individualFilters[j] === allPackets[m][0] ||
+                        individualFilters[j] === allPackets[m][1] ||
+                        individualFilters[j] === allPackets[m][2] ||
+                        individualFilters[j] === allPackets[m][3] ||
+                        individualFilters[j] === allPackets[m][4] ||
+                        individualFilters[j] === allPackets[m][5] ||
+                        individualFilters[j] === allPackets[m][6]
+                    ) {
+                    } else {
                         matchesFilters = false;
                         break;
-                    }   
+                    }
                 }
-                if (matchesFilters == true){
-                    jQuery("#sniffedPackets").prepend("<tr><td>" + allPackets[m][0] + "</td><td>" + allPackets[m][1] + "</td><td>" + allPackets[m][2] + "</td><td>" + allPackets[m][3] + "</td><td>" + allPackets[m][4] + "</td><td>" + allPackets[m][5] + "</td><td>" + allPackets[m][6] + "</td></tr>");
+                if (matchesFilters) {
+                    jQuery("#sniffedPackets").prepend(
+                        "<tr><td>" +
+                        allPackets[m][0] +
+                        "</td><td>" +
+                        allPackets[m][1] +
+                        "</td><td>" +
+                        allPackets[m][2] +
+                        "</td><td>" +
+                        allPackets[m][3] +
+                        "</td><td>" +
+                        allPackets[m][4] +
+                        "</td><td>" +
+                        allPackets[m][5] +
+                        "</td><td>" +
+                        allPackets[m][6] +
+                        "</td></tr>"
+                    );
                     packetsDisplayed += 1;
                 }
             }
-            if (packetsDisplayed == 0){
+            if (packetsDisplayed === 0) {
                 jQuery("#sniffedPackets").prepend("<tr><td></td><td></td><td></td><td>No packets match the filter!</td></tr>");
             }
-        }
-        else{
-            for (let k = 0; k < allPackets.length; k++){
-                jQuery("#sniffedPackets").prepend("<tr><td>" + allPackets[k][0] + "</td><td>" + allPackets[k][1] + "</td><td>" + allPackets[k][2] + "</td><td>" + allPackets[k][3] + "</td><td>" + allPackets[k][4] + "</td><td>" + allPackets[k][5] + "</td><td>" + allPackets[k][6] + "</td></tr>");
+        } else {
+            for (let k = 0; k < allPackets.length; k++) {
+                jQuery("#sniffedPackets").prepend(
+                    "<tr><td>" +
+                    allPackets[k][0] +
+                    "</td><td>" +
+                    allPackets[k][1] +
+                    "</td><td>" +
+                    allPackets[k][2] +
+                    "</td><td>" +
+                    allPackets[k][3] +
+                    "</td><td>" +
+                    allPackets[k][4] +
+                    "</td><td>" +
+                    allPackets[k][5] +
+                    "</td><td>" +
+                    allPackets[k][6] +
+                    "</td></tr>"
+                );
                 packetsDisplayed += 1;
             }
         }
     }
 
-    function removeFilter(){
+    function removeFilter() {
         filter = "";
         jQuery("#sniffedPackets").empty();
         packetsDisplayed = 0;
-        for (let k = 0; k < allPackets.length; k++){
-            jQuery("#sniffedPackets").prepend("<tr><td>" + allPackets[k][0] + "</td><td>" + allPackets[k][1] + "</td><td>" + allPackets[k][2] + "</td><td>" + allPackets[k][3] + "</td><td>" + allPackets[k][4] + "</td><td>" + allPackets[k][5] + "</td><td>" + allPackets[k][6] + "</td></tr>");
+        for (let k = 0; k < allPackets.length; k++) {
+            jQuery("#sniffedPackets").prepend(
+                "<tr><td>" +
+                allPackets[k][0] +
+                "</td><td>" +
+                allPackets[k][1] +
+                "</td><td>" +
+                allPackets[k][2] +
+                "</td><td>" +
+                allPackets[k][3] +
+                "</td><td>" +
+                allPackets[k][4] +
+                "</td><td>" +
+                allPackets[k][5] +
+                "</td><td>" +
+                allPackets[k][6] +
+                "</td></tr>"
+            );
             packetsDisplayed += 1;
         }
     }
 
-    function resetPackets(){
+    function resetPackets() {
         jQuery("#sniffedPackets").empty();
         packetsDisplayed = 0;
         allPackets = [];
@@ -222,7 +354,7 @@
     </div>
 
     <!-- Top Container -->
-    <div class="large-container" style="height: {topHeight}%; overflow-y:scroll;">
+    <div class="large-container" style="height: {topHeight}%; background-color: {bColor}; overflow-y:scroll;">
         <table id="packets">
             <thead>
                 <tr>
@@ -248,25 +380,98 @@
         on:mousedown={startDragHeight}
         on:keydown={adjustHeight}
     ></button>
-
     <!-- Bottom Row -->
-    <div class="bottom-row" style="height: {bottomHeight}%; ">
-
-        <!-- Bottom Left Container with Nested Containers -->
-        <div class="small-container" style="width: {leftWidth}%; ">
-            <div class="nested-container level-1">
-                Level 1
-                <div class="nested-container level-2">
-                    Level 2
-                    <div class="nested-container level-3">
-                        Level 3
-                        <div class="nested-container level-4">
-                            Level 4
+    <div class="bottom-row" style="height: {bottomHeight}%; background-color: #ffffff;">
+        <!-- Bottom Left Container with Layers -->
+        <div class="small-container-left" style="width: {leftWidth}%; background-color: #ffffff;">
+            <!-- Expand/Collapse All Button at the Top Right -->
+            <div class="layer-header" style="justify-content: flex-end; background-color: rgba(0, 0, 0, 0.1);">
+                <button on:click={toggleAll}>
+                    {Object.values(collapsed).some(state => !state) ? "Collapse All" : "Expand All"}
+                </button>
+            </div>
+        
+            <!-- Application Layer -->
+            <div class="nested-container level-1" id="application-layer" style="background-color: #e8a898;">
+                <div class="layer-header">
+                    <span>{sampleData.application.name}</span>
+                    <button on:click={() => toggleCollapse('application')}>
+                        {collapsed.application ? "Expand" : "Collapse"}
+                    </button>
+                </div>
+        
+                <!-- Content of Application Layer -->
+                {#if !collapsed.application}
+                    <div class="layer-content">
+                        {#each sampleData.application.data as item}
+                            <p>{item}</p>
+                        {/each}
+                    </div>
+                {/if}
+        
+                <!-- Transport Layer (Always Visible as Nested) -->
+                <div class="nested-container level-2" id="transport-layer" style="background-color: #e8c898;">
+                    <div class="layer-header" >
+                        <span>{sampleData.transport.name}</span>
+                        <button on:click={() => toggleCollapse('transport')}>
+                            {collapsed.transport ? "Expand" : "Collapse"}
+                        </button>
+                    </div>
+        
+                    <!-- Content of Transport Layer -->
+                    {#if !collapsed.transport}
+                        <div class="layer-content">
+                            {#each sampleData.transport.data as item}
+                                <p>{item}</p>
+                            {/each}
+                        </div>
+                    {/if}
+        
+                    <!-- Internet Layer (Always Visible as Nested) -->
+                    <div class="nested-container level-3" id="internet-layer" style="background-color: #cbe898;">
+                        <div class="layer-header">
+                            <span>{sampleData.internet.name}</span>
+                            <button on:click={() => toggleCollapse('internet')}>
+                                {collapsed.internet ? "Expand" : "Collapse"}
+                            </button>
+                        </div>
+        
+                        <!-- Content of Internet Layer -->
+                        {#if !collapsed.internet}
+                            <div class="layer-content">
+                                {#each sampleData.internet.data as item}
+                                    <p>{item}</p>
+                                {/each}
+                            </div>
+                        {/if}
+        
+                        <!-- Link Layer (Always Visible as Nested) -->
+                        <div class="nested-container level-4" id="link-layer" style="background-color: #98e8d9;">
+                            <div class="layer-header">
+                                <span>{sampleData.link.name}</span>
+                                <button on:click={() => toggleCollapse('link')}>
+                                    {collapsed.link ? "Expand" : "Collapse"}
+                                </button>
+                            </div>
+        
+                            <!-- Content of Link Layer -->
+                            {#if !collapsed.link}
+                                <div class="layer-content">
+                                    {#each sampleData.link.data as item}
+                                        <p>{item}</p>
+                                    {/each}
+                                </div>
+                            {/if}
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+        
+        
+        
+        
+        
 
         <!-- Vertical Resizer (Width Adjuster) -->
         <button
@@ -281,7 +486,7 @@
 
 
         <!-- Bottom Right Container -->
-        <div class="small-container" style="width: {rightWidth}%;">
+        <div class="small-container-right" style="width: {rightWidth}%; background-color: #ff9800;">
             Hex Container ({Math.round(rightWidth)}%)
         </div>
     </div>
@@ -297,7 +502,8 @@
         width: 100%;
         height: 100vh;
         margin: 0 auto;
-        outline: 10px solid black; 
+        outline: 10px solid black;
+        overflow-y: auto; /* Scrollbar for the outermost container */
     }
 
     .options-bar
@@ -310,15 +516,14 @@
         align-items: center;
         justify-content: center;
         font-size: 1rem;
-        border-bottom: 10px solid rgb(0, 0, 0); /* Adds a bottom outline */
+        border-bottom: 10px solid rgb(0, 0, 0);
     }
 
     .large-container
     {
         width: 100%;
-        /*display: flex;*/
-        align-items: center;
-        justify-content: center;
+        align-items: flex-start;
+        justify-content: flex-start;
         color: rgb(0, 0, 0);
         outline: #000;
         font-size: 1.5rem;
@@ -341,94 +546,123 @@
         position: relative;
     }
 
-    .small-container
+    .small-container-right
     {
         display: flex;
-        align-items: center;
-        justify-content: center;
-        color: rgb(0, 0, 0);
+        flex-direction: column; /* Allow vertical stacking */
+        align-items: stretch;
+        justify-content: flex-start;
+        color: #322c22;
         font-size: 1.2rem;
-        overflow: hidden;
+        overflow: auto; /* Scrollbar for the outermost layer (left section) */
+        padding-left: 10px; /* Add padding on the left side */
+    }
+
+    .small-container-left
+    {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        justify-content: flex-start;
+        margin: 0;
+        padding-left: 7px;
+        padding-right: 10px; /* Add padding on the right side */
+        box-sizing: border-box;
+        overflow: auto;
+        scrollbar-width: thin; /* Thin scrollbar */
+        scrollbar-color: rgba(0, 0, 0, 0.3) rgba(0, 0, 0, 0.1); /* Thumb and track color */
+    }
+    
+    .small-container-left::-webkit-scrollbar
+    {
+        width: 8px; /* Width of vertical scrollbar */
+        height: 8px; /* Height of horizontal scrolblar */
+    }
+
+    .small-container-left::-webkit-scrollbar-track
+    {
+        background: rgba(0, 0, 0, 0.1); /* Track color */
+        border-radius: 4px; /* Smooth rounded edges */
+    }
+
+    .small-container-left::-webkit-scrollbar-thumb
+    {
+        background: rgba(0, 0, 0, 0.3); /* Thumb color */
+        border-radius: 4px; /* Smooth rounded edges */
+        transition: background 0.3s;
+    }
+
+    .small-container-left::-webkit-scrollbar-thumb:hover
+    {
+        background: rgba(0, 0, 0, 0.5); /* Highlighted on hover */
+    }
+
+    .layer-header
+    {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 5px;
+        font-weight: bold;
+        background-color: rgba(255, 255, 255, 0.1);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        position: relative; /* Ensure it doesn’t overlap content */
+        z-index: 1;
+    }
+
+    .layer-content
+    {
+        padding: 10px;
+        background-color: rgba(255, 255, 255, 0.2);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        margin-top: 5px; /* Add spacing below the header */
     }
 
     .nested-container
     {
-        width: 80%;
-        height: 80%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-size: 0.8rem;
-        border: 2px solid white;
+        margin: 10px;
+        padding: 10px;
+        background-color: rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(0, 0, 0, 0.2);
+        border-radius: 8px;
+        overflow-y: auto;
     }
 
-    #packets
-    {
-        width: 100%;
-        border: none;
-    }
-
-    .level-1
-    {
-        background-color: #f44336;
-    }
-
-    .level-2
-    {
-        background-color: #e91e63;
-    }
-
-    .level-3
-    {
-        background-color: #9c27b0;
-    }
-
-    .level-4
-    {
-        background-color: #673ab7;
-    }
-
-    .level-5
-    {
-        background-color: #3f51b5;
-    }
 
     /* Horizontal Resizer (Height Adjuster) */
     .horizontal-resizer
     {
-        height: 11px;
-        background-color: #353d2a; 
-        border: none;             
-        outline: none;    
+        height: 10px;
+        background-color: #000;
         cursor: ns-resize;
         width: 100%;
-        z-index: 1;               /* Keeps it on top of adjacent elements */
+        z-index: 1;
         position: relative;
-        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1); 
     }
 
-    .horizontal-resizer:focus-visible
+    .horizontal-resizer:hover
     {
-        outline: 2px solid #4caf50; /* Green outline for focus via keyboard */
-        outline-offset: 2px;       /* Space between outline and element */
+        background-color: #555;
     }
 
     /* Vertical Resizer (Width Adjuster) */
     .vertical-resizer
     {
-        width: 7px;
-        background-color: #353d2a; 
-        border: none;             
-        outline: none;            
-        cursor: ew-resize;        
-        z-index: 2;               
-        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1); 
+        width: 10px;
+        background-color: #000;
+        cursor: ew-resize;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        z-index: 1;
+        transform: translateX(-50%); /* Center the resizer on the boundary */
     }
 
-    .vertical-resizer:focus-visible
+
+    .vertical-resizer:hover
     {
-        outline: 2px solid #4caf50; 
-        outline-offset: 2px;      
+        background-color: #555;
     }
+
+    
 </style>
