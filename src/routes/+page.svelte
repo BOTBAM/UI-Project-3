@@ -234,6 +234,9 @@
             }
         }
         if (matchesFilters == true) {
+            if (packetsDisplayed == 0){
+                jQuery("#sniffedPackets").empty();
+            }
             jQuery("#sniffedPackets").prepend(
                 "<tr><td>" +
                     (i + 1) +
@@ -383,8 +386,10 @@
     }
 
     function resetPackets() {
-        jQuery("#sniffedPackets").empty();
-        packetsDisplayed = 0;
+        if(packetsDisplayed != 0){
+            jQuery("#sniffedPackets").empty();
+            packetsDisplayed = 0;
+        }
         allPackets = [];
     }
 
